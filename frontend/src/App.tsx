@@ -143,6 +143,7 @@ export default function App() {
       <main className="grid">
         <Docket
           tickets={tickets} order={order} setOrder={setOrder} lastRun={lastRun} busy={busy} focus={filter}
+          pendingFor={(pay?.payment_requests ?? []).filter(r => r.status === 'pending_approval' && r.ticket_id != null).map(r => r.ticket_id as number)}
           onRun={id => act(async () => { const r = await api.runTicket(id); watch(r.run_id, r.stream) })}
           onRunAll={() => act(async () => {
             const r = await api.runAll(order.filter(id => tickets.find(t => t.id === id)?.status !== 'resolved'))

@@ -89,7 +89,7 @@
 
   <h3>Actual</h3>
   <!--ACTUAL-101--><div class="box actual"><span class="label">Actual — from the run, read from output/audit_trail.json</span>
-<p class="lede"><b>Two passes.</b> The full run took 13:42:34–13:46:52 EDT, 45,013 tokens. Will approved invoice 501 at 13:43:59 EDT, while the run was still going. The closing pass took 13:55:27–13:55:51 EDT, 11,402 tokens, with Boss alone.</p>
+<p class="lede"><b>Two passes.</b> The full run took 14:17:15–14:18:43 EDT, 41,628 tokens. Will approved invoice 501 at 14:17:22 EDT, while the run was still going. The closing pass took 14:20:41–14:21:59 EDT, 11,161 tokens, with Boss alone.</p>
 <table>
 <tr><th>Called first</th><td>Boss, which called <code>get_ticket(101)</code> and saw size S at 0 and the link to invoice 501.</td></tr>
 <tr><th>Delegations, in order</th><td><ol>
@@ -116,7 +116,7 @@
   <li>Closing pass: <code>get_ticket</code>, then <code>list_payments</code> to confirm Will's approval, then <code>update_ticket → resolved</code>.</li>
   </ul></li>
 </ul></td></tr>
-<tr><th>Final status</th><td><b>Resolved</b>. Will approved request 1 ($840) at 13:43:59 EDT.</td></tr>
+<tr><th>Final status</th><td><b>Resolved</b>. Will approved request 1 ($840) at 14:17:22 EDT.</td></tr>
 <tr><th>Against Expected</th><td><ul>
 <li><b>Matched:</b>
   <ul>
@@ -163,7 +163,7 @@
 
   <h3>Actual</h3>
   <!--ACTUAL-102--><div class="box actual"><span class="label">Actual — from the run, read from output/audit_trail.json</span>
-<p class="lede"><b>Two passes.</b> The full run took 13:46:52–13:51:11 EDT, 24,433 tokens. Will approved the rent at 13:50:02 EDT, during the run. The closing pass took 13:55:51–13:56:25 EDT, 10,629 tokens, with Boss alone.</p>
+<p class="lede"><b>Two passes.</b> The full run took 14:21:59–14:22:03 EDT, 24,433 tokens. Will approved the rent at 14:22:08 EDT, while the team was working ticket 103. Will then clicked <b>Close this ticket</b>, and the closing pass took 14:27:07–14:27:09 EDT, 10,629 tokens, with Boss alone.</p>
 <table>
 <tr><th>Called first</th><td>Boss, which called <code>get_ticket(102)</code> and saw lease 1, due in 2 days.</td></tr>
 <tr><th>Delegations, in order</th><td><ol>
@@ -183,7 +183,7 @@
   <li>Closing pass: <code>get_ticket</code>, then <code>list_payments</code> → rent paid → <code>update_ticket → resolved</code>.</li>
   </ul></li>
 </ul></td></tr>
-<tr><th>Final status</th><td><b>Resolved</b>. Will approved request 2 ($2,400) at 13:50:02 EDT, knowing it would cross the $200 floor.</td></tr>
+<tr><th>Final status</th><td><b>Resolved</b>. Will approved request 2 ($2,400) at 14:22:08 EDT, knowing it would cross the $200 floor.</td></tr>
 <tr><th>Against Expected</th><td><ul>
 <li><b>Matched:</b>
   <ul>
@@ -194,7 +194,7 @@
   <li><code>request_payment</code> flagged below the floor.</li>
   <li><code>awaiting_approval</code>, then <code>resolved</code>.</li>
   </ul></li>
-<li><b>Differed:</b> nothing in the agents' work. A closing pass was needed only because Boss set the status before Will approved.</li>
+<li><b>Differed:</b> nothing in the agents' work. A closing pass was needed only because Will signed after Boss had set the status.</li>
 </ul></td></tr>
 </table></div><!--/ACTUAL-102-->
 </section>
@@ -227,12 +227,13 @@
 
   <h3>Actual</h3>
   <!--ACTUAL-103--><div class="box actual"><span class="label">Actual — from the run, read from output/audit_trail.json</span>
-<p class="lede"><b>One run</b>, 13:51:11–13:55:03 EDT, 40,346 tokens, completed.</p>
+<p class="lede"><b>One run</b>, 14:22:03–14:23:56 EDT, 46,321 tokens, completed.</p>
 <table>
 <tr><th>Called first</th><td>Boss, which called <code>get_ticket(103)</code> and saw 8 M on hand against 20 requested.</td></tr>
 <tr><th>Delegations, in order</th><td><ol>
 <li><b>Boss → Inventory.</b> Why: “Confirm stock in every size and vendors/restock lead time.”</li>
 <li><b>Boss → Accounting.</b> Why: price the bulk discount within policy and check cash.</li>
+<li><b>Boss → Accounting, again.</b> Why: “Correction for ticket 103: use actual SKU CC-HOOD-NAVY (not vendor name Bulldog Print Co).” Accounting's first pass had reported that it could not price the order.</li>
 <li><b>Boss → Customer Service.</b> Why: draft the counteroffer to the club with the stock, the wait, and the 20% price.</li>
 </ol></td></tr>
 <tr><th>Tools used, and why</th><td><ul>
@@ -240,14 +241,12 @@
   <ul>
   <li><code>get_ticket</code>.</li>
   <li><code>check_stock(qty 20)</code> → M 8 (short 12), S 4, L 14, XL 6.</li>
-  <li><code>list_vendors</code> → Bulldog Print Co unblocked, because invoice 501 was paid at 13:43:59; arrival 5 Sept.</li>
+  <li><code>list_vendors</code> → Bulldog Print Co unblocked, because invoice 501 was paid at 14:17:22; arrival 5 Sept.</li>
   </ul></li>
 <li><b>Accounting:</b>
   <ul>
-  <li><code>get_bills_due</code> → $160 cash.</li>
-  <li><code>quote_price</code>, first with the vendor's name as the SKU: refused.</li>
-  <li><code>get_ticket</code>, to find the right SKU.</li>
-  <li><code>quote_price(CC-HOOD-NAVY, 20, 20% off)</code> → $46.40 each, $928, a 53% margin.</li>
+  <li>First pass: <code>get_bills_due</code>, then <code>quote_price</code> with the vendor's name as the SKU, which was refused (“no pricing row”). It reported back without a price.</li>
+  <li>Second pass, after Boss's correction: <code>get_bills_due</code> → $160 cash; <code>quote_price(CC-HOOD-NAVY, 20, 20% off)</code> → $46.40 each, $928, a 53% margin.</li>
   <li>No payment requested.</li>
   </ul></li>
 <li><b>Customer Service:</b> <code>get_ticket</code>, then <code>save_draft</code> (draft 2) to the Yale AI Club.</li>
@@ -261,14 +260,15 @@
   <li>Inventory, then Accounting, then Customer Service.</li>
   <li>Facilities not called.</li>
   <li>No <code>request_payment</code>.</li>
-  <li>The counteroffer included other sizes.</li>
+  <li>A counteroffer of stock now plus a wait for the rest.</li>
   </ul></li>
 <li><b>Differed:</b>
   <ul>
   <li>The ticket ended <b>resolved</b> rather than in progress, because Will changed the rule after an earlier run left it waiting and reruns made duplicate drafts.</li>
   <li>Accounting went straight to the 20% maximum.</li>
-  <li>Accounting first passed the vendor name as a SKU and had to retry.</li>
+  <li>Accounting first passed the vendor name as a SKU, so Boss needed a fourth delegation (back to Accounting) to get the price.</li>
   <li>Inventory found the vendor unblocked, because Will paid invoice 501 during ticket 101.</li>
+  <li>The draft left out the other sizes in stock (S 4, L 14, XL 6), although the counteroffer rule allows them.</li>
   </ul></li>
 </ul></td></tr>
 </table></div><!--/ACTUAL-103-->
@@ -283,7 +283,7 @@
 <table class="ledger">
 <tr><th style="width:12%">Item</th><th>How and why cash changed</th><th class="num" style="width:13%">Change</th><th class="num" style="width:13%">Balance</th></tr>
 <tr><td><b>Start</b></td><td>Checking at the reset, from the original database (<code>campus_customs.db</code>), shop date 31 Aug 2026.</td><td class="num"></td><td class="num"><b>$3,400.00</b></td></tr>
-<tr><td>Ticket 101</td><td>Bulldog Print Co&#x27;s invoice 501, 3 days overdue on 31 Aug; it blocked every apparel restock, so Will&#x27;s rule pays it before rent that is not yet late. Requested by Accounting (request 1, filed under ticket 101); approved by Will Barker at 13:43:59 EDT.</td><td class='num'>−$840.00</td><td class='num'>$2,560.00</td></tr><tr><td>Ticket 102</td><td>September rent on the Chapel Street shop (lease 1), due 2 Sept; rent comes first “because if you don&#x27;t have a shop, you don&#x27;t have a business”. Requested by Accounting (request 2, filed under ticket 102); approved by Will Barker at 13:50:02 EDT.</td><td class='num'>−$2,400.00</td><td class='num'>$160.00</td></tr>
+<tr><td>Ticket 101</td><td>Bulldog Print Co&#x27;s invoice 501, 3 days overdue on 31 Aug; it blocked every apparel restock, so Will&#x27;s rule pays it before rent that is not yet late. Requested by Accounting (request 1, filed under ticket 101); approved by Will Barker at 14:17:22 EDT.</td><td class='num'>−$840.00</td><td class='num'>$2,560.00</td></tr><tr><td>Ticket 102</td><td>September rent on the Chapel Street shop (lease 1), due 2 Sept; rent comes first “because if you don&#x27;t have a shop, you don&#x27;t have a business”. Requested by Accounting (request 2, filed under ticket 102); approved by Will Barker at 14:22:08 EDT.</td><td class='num'>−$2,400.00</td><td class='num'>$160.00</td></tr>
 <tr><td>Ticket 103</td><td>No payment. The offer to the club is a quote, not cash; the 12-hoodie restock ($308 with spares) was not ordered, since it exceeds the $160 left. Resolved without moving money.</td><td class="num">$0.00</td><td class="num">$160.00</td></tr>
 <tr><td><b>End</b></td><td>Checking in <code>cash_accounts</code> after the run, dated 2026-08-31: $3,400.00 − 3,240.00 = $160.00. This is $40.00 below the $200 floor; Will approved the rent knowing it would cross the floor.</td><td class="num"><b>−$3,240.00</b></td><td class="num"><b>$160.00</b></td></tr>
 </table></div><!--/ACTUAL-cash-->

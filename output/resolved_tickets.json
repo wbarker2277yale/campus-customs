@@ -36,7 +36,7 @@
           "what": "invoice 501",
           "amount": 840.0,
           "approved_by": "Will Barker",
-          "approved_at_edt": "13:43:59"
+          "approved_at_edt": "14:17:22"
         }
       ],
       "drafts": [
@@ -50,18 +50,18 @@
       "cash_change": -840.0,
       "runs": [
         {
-          "run_id": "65a348393394",
-          "start_edt": "13:42:34",
-          "end_edt": "13:46:52",
+          "run_id": "faa977decdc2",
+          "start_edt": "14:17:15",
+          "end_edt": "14:18:43",
           "stopped": "completed",
-          "total_tokens": 45013
+          "total_tokens": 41628
         },
         {
-          "run_id": "3283cb18abaa",
-          "start_edt": "13:55:27",
-          "end_edt": "13:55:51",
+          "run_id": "56fa4ddb6644",
+          "start_edt": "14:20:41",
+          "end_edt": "14:21:59",
           "stopped": "completed",
-          "total_tokens": 11402
+          "total_tokens": 11161
         }
       ]
     },
@@ -93,7 +93,7 @@
           "what": "rent 1",
           "amount": 2400.0,
           "approved_by": "Will Barker",
-          "approved_at_edt": "13:50:02"
+          "approved_at_edt": "14:22:08"
         }
       ],
       "drafts": [],
@@ -101,16 +101,16 @@
       "cash_change": -2400.0,
       "runs": [
         {
-          "run_id": "01317ed94c75",
-          "start_edt": "13:46:52",
-          "end_edt": "13:51:11",
+          "run_id": "9f73422d0f80",
+          "start_edt": "14:21:59",
+          "end_edt": "14:22:03",
           "stopped": "completed",
           "total_tokens": 24433
         },
         {
-          "run_id": "a41871de6832",
-          "start_edt": "13:55:51",
-          "end_edt": "13:56:25",
+          "run_id": "72c356d8af11",
+          "start_edt": "14:27:07",
+          "end_edt": "14:27:09",
           "stopped": "completed",
           "total_tokens": 10629
         }
@@ -122,11 +122,11 @@
       "requester": "Yale AI Club",
       "type": "price_override",
       "final_status": "resolved",
-      "outcome": "Resolved once the offer was drafted. The Yale AI Club is offered 20 hoodies at $46.40 each (20% bulk discount, $928): 8 size M now and 12 size M after a restock arriving about 5 Sept, or other sizes from stock. No money moved.",
+      "outcome": "Resolved once the offer was drafted. The Yale AI Club is offered 20 hoodies at $46.40 each (20% bulk discount, $928): 8 size M now and 12 size M after a restock arriving about 5 Sept. No money moved.",
       "agents": [
         {
           "agent": "Boss",
-          "contribution": "Read the ticket and sent it to Inventory, then Accounting, then Customer Service. It accepted the 20% offer and marked the ticket resolved once the draft was saved."
+          "contribution": "Read the ticket and sent it to Inventory, then Accounting. When Accounting could not price the order, Boss sent it back with the correct SKU (CC-HOOD-NAVY), then sent the 20% offer to Customer Service and marked the ticket resolved once the draft was saved."
         },
         {
           "agent": "Inventory",
@@ -134,11 +134,11 @@
         },
         {
           "agent": "Accounting",
-          "contribution": "Checked cash ($160) and priced 20 hoodies at the 20% maximum: $46.40 each, $928, a 53% margin. Its first quote_price call passed the vendor's name as the SKU and was refused; it re-read the ticket and retried correctly. It requested no payment."
+          "contribution": "Its first quote_price call passed the vendor's name as the SKU, was refused, and it reported that it could not price the order. Sent back by Boss with the correct SKU, it checked cash ($160) and priced 20 hoodies at the 20% maximum: $46.40 each, $928, a 53% margin. It requested no payment."
         },
         {
           "agent": "Customer Service",
-          "contribution": "Saved draft 2 to the Yale AI Club (formal, unsent) with the $46.40 offer, 8 M now, 12 M after a restock in about five days, and other sizes as alternatives."
+          "contribution": "Saved draft 2 to the Yale AI Club (formal, unsent): 8 size M now and the remaining 12 after the restock, expected about 5 Sept, all at $46.40. It did not mention the other sizes in stock."
         }
       ],
       "human_approvals": [],
@@ -153,11 +153,11 @@
       "cash_change": 0,
       "runs": [
         {
-          "run_id": "e881d334e2d3",
-          "start_edt": "13:51:11",
-          "end_edt": "13:55:03",
+          "run_id": "7c0fc880ed80",
+          "start_edt": "14:22:03",
+          "end_edt": "14:23:56",
           "stopped": "completed",
-          "total_tokens": 40346
+          "total_tokens": 46321
         }
       ]
     }

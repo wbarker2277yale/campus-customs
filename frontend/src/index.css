@@ -205,3 +205,5 @@ button { font: inherit; }
 
 .ticket--focus { box-shadow: 0 0 0 2px var(--gold); }
 .docket { position: relative; }
+
+.stamp--signed { color: var(--yale); font-size: 11px; }

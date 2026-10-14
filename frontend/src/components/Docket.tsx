@@ -8,7 +8,7 @@ const STAMP: Record<string, string> = {
   open: 'Open', in_progress: 'In Progress', awaiting_approval: 'Awaiting Signature', resolved: 'Resolved',
 }
 
-export function Docket({ tickets, order, setOrder, lastRun, busy, onRun, onRunAll, focus = null }: {
+export function Docket({ tickets, order, setOrder, lastRun, busy, onRun, onRunAll, focus = null, pendingFor = [] }: {
   tickets: TicketRow[]
   order: number[]
   setOrder: (o: number[]) => void
@@ -17,6 +17,7 @@ export function Docket({ tickets, order, setOrder, lastRun, busy, onRun, onRunAl
   onRun: (id: number) => void
   onRunAll: () => void
   focus?: number | null
+  pendingFor?: number[]  // tickets with a payment still waiting for Will's signature
 }) {
   // Scroll only this panel (never the page) to the focused ticket's card.
   const panel = useRef<HTMLElement>(null)
@@ -52,7 +53,11 @@ export function Docket({ tickets, order, setOrder, lastRun, busy, onRun, onRunAl
               <div className="ticket__no">No. {t.id} · {t.type.replace('_', ' ')}</div>
               <h3>{t.subject}</h3>
               <div className="ticket__from">from {t.requester}</div>
-              <div className={`stamp stamp--${t.status}`}>{STAMP[t.status] ?? t.status}</div>
+              {(() => {
+                // Signed but not yet closed: the wait is on Boss's next pass, not on Will.
+                const signed = t.status === 'awaiting_approval' && !pendingFor.includes(t.id)
+                return <div className={`stamp stamp--${signed ? 'signed' : t.status}`}>{signed ? 'Signed · Boss to close' : (STAMP[t.status] ?? t.status)}</div>
+              })()}
               {run ? (
                 <div className="ticket__summary">
                   <div className="ticket__crests">
@@ -69,8 +74,11 @@ export function Docket({ tickets, order, setOrder, lastRun, busy, onRun, onRunAl
                 <div className="ticket__summary ticket__summary--none">No agent has worked this ticket yet.</div>
               )}
               <button className="btn" disabled={busy || t.status === 'resolved'} onClick={() => onRun(t.id)}>
-                Work this ticket
+                {t.status === 'awaiting_approval' && !pendingFor.includes(t.id) ? 'Close this ticket' : 'Work this ticket'}
               </button>
+              {t.status === 'awaiting_approval' && !pendingFor.includes(t.id) && (
+                <p className="fine">Your signature is recorded. One short pass lets Boss confirm the payment and mark the ticket resolved.</p>
+              )}
             </div>
           </article>
         )

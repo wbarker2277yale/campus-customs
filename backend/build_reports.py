@@ -135,12 +135,12 @@ RECORD = {
         },
     },
     103: {
-        "outcome": "Resolved once the offer was drafted. The Yale AI Club is offered 20 hoodies at $46.40 each (20% bulk discount, $928): 8 size M now and 12 size M after a restock arriving about 5 Sept, or other sizes from stock. No money moved.",
+        "outcome": "Resolved once the offer was drafted. The Yale AI Club is offered 20 hoodies at $46.40 each (20% bulk discount, $928): 8 size M now and 12 size M after a restock arriving about 5 Sept. No money moved.",
         "agents": {
-            "boss": "Read the ticket and sent it to Inventory, then Accounting, then Customer Service. It accepted the 20% offer and marked the ticket resolved once the draft was saved.",
+            "boss": "Read the ticket and sent it to Inventory, then Accounting. When Accounting could not price the order, Boss sent it back with the correct SKU (CC-HOOD-NAVY), then sent the 20% offer to Customer Service and marked the ticket resolved once the draft was saved.",
             "inventory": "Found 8 M on hand (short 12) plus S 4, L 14, and XL 6. Bulldog Print Co was no longer blocked, because Will had paid invoice 501 earlier in the run, so an order would arrive 5 Sept. It drafted no purchase order.",
-            "accounting": "Checked cash ($160) and priced 20 hoodies at the 20% maximum: $46.40 each, $928, a 53% margin. Its first quote_price call passed the vendor's name as the SKU and was refused; it re-read the ticket and retried correctly. It requested no payment.",
-            "customer_service": "Saved draft 2 to the Yale AI Club (formal, unsent) with the $46.40 offer, 8 M now, 12 M after a restock in about five days, and other sizes as alternatives.",
+            "accounting": "Its first quote_price call passed the vendor's name as the SKU, was refused, and it reported that it could not price the order. Sent back by Boss with the correct SKU, it checked cash ($160) and priced 20 hoodies at the 20% maximum: $46.40 each, $928, a 53% margin. It requested no payment.",
+            "customer_service": "Saved draft 2 to the Yale AI Club (formal, unsent): 8 size M now and the remaining 12 after the restock, expected about 5 Sept, all at $46.40. It did not mention the other sizes in stock.",
         },
     },
 }
@@ -253,7 +253,7 @@ TIMELINE = {
 </ul></td></tr>
 </table>""",
     102: f"""
-<p class="lede"><b>Two passes.</b> The full run took {span(R[102][0])}. Will approved the rent at {APPROVED[102]} EDT, during the run. The closing pass took {span(R[102][1])}, with Boss alone.</p>
+<p class="lede"><b>Two passes.</b> The full run took {span(R[102][0])}. Will approved the rent at {APPROVED[102]} EDT, while the team was working ticket 103. Will then clicked <b>Close this ticket</b>, and the closing pass took {span(R[102][1])}, with Boss alone.</p>
 <table>
 <tr><th>Called first</th><td>Boss, which called <code>get_ticket(102)</code> and saw lease 1, due in 2 days.</td></tr>
 <tr><th>Delegations, in order</th><td><ol>
@@ -284,7 +284,7 @@ TIMELINE = {
   <li><code>request_payment</code> flagged below the floor.</li>
   <li><code>awaiting_approval</code>, then <code>resolved</code>.</li>
   </ul></li>
-<li><b>Differed:</b> nothing in the agents' work. A closing pass was needed only because Boss set the status before Will approved.</li>
+<li><b>Differed:</b> nothing in the agents' work. A closing pass was needed only because Will signed after Boss had set the status.</li>
 </ul></td></tr>
 </table>""",
     103: f"""
@@ -294,6 +294,7 @@ TIMELINE = {
 <tr><th>Delegations, in order</th><td><ol>
 <li><b>Boss → Inventory.</b> Why: “Confirm stock in every size and vendors/restock lead time.”</li>
 <li><b>Boss → Accounting.</b> Why: price the bulk discount within policy and check cash.</li>
+<li><b>Boss → Accounting, again.</b> Why: “Correction for ticket 103: use actual SKU CC-HOOD-NAVY (not vendor name Bulldog Print Co).” Accounting's first pass had reported that it could not price the order.</li>
 <li><b>Boss → Customer Service.</b> Why: draft the counteroffer to the club with the stock, the wait, and the 20% price.</li>
 </ol></td></tr>
 <tr><th>Tools used, and why</th><td><ul>
@@ -305,10 +306,8 @@ TIMELINE = {
   </ul></li>
 <li><b>Accounting:</b>
   <ul>
-  <li><code>get_bills_due</code> → $160 cash.</li>
-  <li><code>quote_price</code>, first with the vendor's name as the SKU: refused.</li>
-  <li><code>get_ticket</code>, to find the right SKU.</li>
-  <li><code>quote_price(CC-HOOD-NAVY, 20, 20% off)</code> → $46.40 each, $928, a 53% margin.</li>
+  <li>First pass: <code>get_bills_due</code>, then <code>quote_price</code> with the vendor's name as the SKU, which was refused (“no pricing row”). It reported back without a price.</li>
+  <li>Second pass, after Boss's correction: <code>get_bills_due</code> → $160 cash; <code>quote_price(CC-HOOD-NAVY, 20, 20% off)</code> → $46.40 each, $928, a 53% margin.</li>
   <li>No payment requested.</li>
   </ul></li>
 <li><b>Customer Service:</b> <code>get_ticket</code>, then <code>save_draft</code> (draft 2) to the Yale AI Club.</li>
@@ -322,14 +321,15 @@ TIMELINE = {
   <li>Inventory, then Accounting, then Customer Service.</li>
   <li>Facilities not called.</li>
   <li>No <code>request_payment</code>.</li>
-  <li>The counteroffer included other sizes.</li>
+  <li>A counteroffer of stock now plus a wait for the rest.</li>
   </ul></li>
 <li><b>Differed:</b>
   <ul>
   <li>The ticket ended <b>resolved</b> rather than in progress, because Will changed the rule after an earlier run left it waiting and reruns made duplicate drafts.</li>
   <li>Accounting went straight to the 20% maximum.</li>
-  <li>Accounting first passed the vendor name as a SKU and had to retry.</li>
+  <li>Accounting first passed the vendor name as a SKU, so Boss needed a fourth delegation (back to Accounting) to get the price.</li>
   <li>Inventory found the vendor unblocked, because Will paid invoice 501 during ticket 101.</li>
+  <li>The draft left out the other sizes in stock (S 4, L 14, XL 6), although the counteroffer rule allows them.</li>
   </ul></li>
 </ul></td></tr>
 </table>""",

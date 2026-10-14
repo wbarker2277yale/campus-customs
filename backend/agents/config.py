@@ -38,7 +38,7 @@ MAX_OUTPUT_TOKENS_PER_RESPONSE = 6_000  # includes the model's hidden reasoning 
 MAX_DELEGATION_DEPTH = 3            # boss -> agent -> agent -> agent, no deeper
 MAX_DELEGATIONS_PER_TICKET = 6
 AUDIT_PREVIEW_CHARS = 800           # tool results are trimmed to this in the audit trail
-MODEL_CALL_TIMEOUT_S = 30           # one model call; typical calls take ~5 s, stragglers are retried
+MODEL_CALL_TIMEOUT_S = 15           # one model call; typical calls take 2-6 s, stragglers are retried
 MODEL_CALL_RETRIES = 3              # retries on timeout or a Portkey 5xx error
 
 
@@ -71,7 +71,7 @@ def build_model() -> OpenAIResponsesModel:
     """One shared gpt-6-luna client, through Portkey, for all five agents."""
     key = require_api_key()
     # Portkey latency is erratic (2-65 s for the same small call) and it sometimes returns 500.
-    # Cut any call at 30 s and retry it, up to 3 times, so one straggler can't freeze the board.
+    # Cut any call at 15 s and retry it, up to 3 times, so one straggler can't freeze the board.
     client = AsyncOpenAI(api_key=key, base_url=PORTKEY_BASE_URL,
                          default_headers={"x-portkey-api-key": key},
                          timeout=MODEL_CALL_TIMEOUT_S, max_retries=MODEL_CALL_RETRIES)

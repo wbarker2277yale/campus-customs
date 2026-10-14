@@ -325,7 +325,7 @@ Multi-agent chats burn tokens fast, so every limit applies to one ticket as a wh
 | Model requests per ticket | 30 | an agent looping on the same question |
 | Tool calls per ticket (MCP tools plus delegations) | 40 | repeated lookups of the same fact |
 | Tokens per ticket (input plus output) | 150,000 | one ticket draining the budget meant for all three |
-| Output tokens per model response (including hidden reasoning) | 6,000, with reasoning effort set to low; each call cut at 30 s and retried up to 3 times | long-winded drafts and slow, costly reasoning; 1,500 proved too small in the first run |
+| Output tokens per model response (including hidden reasoning) | 6,000, with reasoning effort set to low; each call cut at 15 s and retried up to 3 times | long-winded drafts and slow, costly reasoning; 1,500 proved too small in the first run |
 | Delegation depth | 3 (Boss → agent → agent → agent) | chains that wander away from the ticket |
 | Delegations per ticket | 6 | agents passing work back and forth |
 | No self-delegation, and no delegating back up the chain | n/a | ping-pong between two agents |
@@ -369,4 +369,4 @@ An earlier run on 7 October is also in the audit trail. That run is where three 
 - a fixed instruction to file each report straight away;
 - the change to ticket 103's rule.
 
-Portkey latency proved erratic, so every model call is now cut at 30 seconds and retried up to 3 times. The board shows a heartbeat line while an agent is thinking.
+Portkey latency proved erratic, so every model call is now cut at 15 seconds and retried up to 3 times. The board shows a heartbeat line while an agent is thinking.
