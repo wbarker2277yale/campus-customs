@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Campus Customs — Desk Tickets: Expected vs. Actual</title>
+<style>
+  :root {
+    --parchment: #f6efdf; --parchment-dark: #ebe0c6; --ink: #2b1d14; --muted: #6d5a48;
+    --red: #8f1d21; --red-soft: #b8474b; --rule: #d6c6a3; --draft: #fff7e0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--parchment); color: var(--ink);
+         font: 16px/1.55 Georgia, "Times New Roman", serif; }
+  header { background: var(--red); color: var(--parchment); padding: 22px 36px 16px; }
+  header h1 { margin: 0; font-size: 26px; letter-spacing: .04em; text-transform: uppercase; }
+  header p { margin: 6px 0 0; color: #f3d9c9; }
+  nav { display: flex; gap: 4px; padding: 0 36px; background: var(--red);
+        border-bottom: 3px solid var(--ink); }
+  nav button { font: inherit; border: 0; padding: 10px 20px; cursor: pointer;
+               background: var(--red-soft); color: var(--parchment); border-radius: 6px 6px 0 0; }
+  nav button.active { background: var(--parchment); color: var(--red); font-weight: bold; }
+  main { max-width: 980px; margin: 0 auto; padding: 26px 36px 60px; }
+  section.tab { display: none; } section.tab.active { display: block; }
+  h2 { color: var(--red); margin: 0 0 4px; font-size: 24px; }
+  h3 { margin: 28px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--red);
+       text-transform: uppercase; letter-spacing: .05em; font-size: 16px; }
+  .lede { color: var(--muted); margin: 0 0 18px; }
+  .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .actual { border-color: var(--ink); }
+  .ledger th { width: auto; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 4px; background: #fffaf0; }
+  th, td { border: 1px solid var(--rule); padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--parchment-dark); width: 30%; }
+  .box { border: 2px solid var(--red); border-radius: 8px; padding: 14px 18px; background: #fffaf0; }
+  .draft { background: var(--draft); border-style: dashed; }
+  .label { display: inline-block; font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
+           color: var(--parchment); background: var(--red); padding: 2px 8px; border-radius: 4px;
+           margin-bottom: 8px; }
+  .label.ai { background: var(--muted); }
+  .empty { border: 2px dashed var(--rule); border-radius: 8px; min-height: 150px; padding: 14px 18px;
+           color: var(--muted); font-style: italic; background: #fffaf0; }
+  ol, ul { margin: 6px 0; padding-left: 22px; }
+  code { font-family: Menlo, Consolas, monospace; font-size: 13.5px; background: var(--parchment-dark);
+         padding: 1px 5px; border-radius: 3px; }
+  .not { color: var(--muted); }
+  footer { color: var(--muted); font-size: 13px; margin-top: 40px; border-top: 1px solid var(--rule);
+           padding-top: 10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Campus Customs — Desk Tickets</h1>
+  <p>What we expect the agent team to do on each open ticket, set beside what it actually does. Shop date: Monday, 31 August 2026.</p>
+</header>
+<nav>
+  <button data-tab="t101" class="active">Ticket 101</button>
+  <button data-tab="t102">Ticket 102</button>
+  <button data-tab="t103">Ticket 103</button>
+  <button data-tab="cash">Cash</button>
+  <button data-tab="reflection">Reflection</button>
+</nav>
+<main>
+
+<!-- ============================== 101 -->
+<section class="tab active" id="t101">
+  <h2>Ticket 101 — A Bulldog tee in size S</h2>
+  <p class="lede">Tauhid Zaman wants one Classic Bulldog Tee in size S. The shop has none, and its only apparel vendor will not ship until an overdue bill is paid.</p>
+  <table>
+    <tr><th>Request</th><td>1 × CC-TEE-WHITE, size S ($28.00 list, $8.00 unit cost)</td></tr>
+    <tr><th>Stock</th><td>0 on hand in size S, so the shop is short by 1</td></tr>
+    <tr><th>Linked record</th><td>Invoice 501: $840.00 to Bulldog Print Co, due 28 August, 3 days overdue (“Rush reprint CC-TEE-WHITE S”)</td></tr>
+    <tr><th>Restock</th><td>Bulldog Print Co (apparel reprint, 5-day lead time) is blocked until invoice 501 is paid</td></tr>
+  </table>
+
+  <h3>Expected</h3>
+  <div class="box draft">
+    <span class="label ai">Will’s choices (clicked in the prompt questions); wording by the AI</span>
+    <table>
+      <tr><th>Called first</th><td>Boss, which calls <code>get_ticket(101)</code> and sees both the size S shortfall and the link to invoice 501.</td></tr>
+      <tr><th>Delegations expected</th><td><ol>
+        <li><b>Boss → Inventory:</b> confirm the shortfall and find a vendor. Inventory finds Bulldog Print Co blocked, and its <code>create_purchase_order</code> is refused.</li>
+        <li><b>Boss → Accounting:</b> prepare payment of invoice 501. It comes before rent under Will’s rule that “you can pay rent up to ten days late.” Accounting calls <code>request_payment</code>; $2,560 would remain, above the $200 floor.</li>
+        <li><b>Boss → Customer Service:</b> draft a formal reply to Tauhid. Offer a size M today (5 in stock), or to hold an S that arrives about 5 days after the restock.</li>
+      </ol></td></tr>
+      <tr><th>Tools expected</th><td><code>get_ticket</code>, <code>check_stock</code>, <code>list_vendors</code>, <code>create_purchase_order</code> (refused), <code>get_bills_due</code>, <code>request_payment</code>, <code>save_draft</code>, <code>update_ticket</code> → <code>awaiting_approval</code></td></tr>
+      <tr><th>Not called</th><td class="not">Facilities, because nothing about the shop space is involved.</td></tr>
+    </table>
+  </div>
+
+  <h3>Actual</h3>
+  <!--ACTUAL-101--><div class="box actual"><span class="label">Actual — from the run, read from output/audit_trail.json</span>
+<p class="lede"><b>Two passes.</b> The full run took 13:42:34–13:46:52 EDT, 45,013 tokens. Will approved invoice 501 at 13:43:59 EDT, while the run was still going. The closing pass took 13:55:27–13:55:51 EDT, 11,402 tokens, with Boss alone.</p>
+<table>
+<tr><th>Called first</th><td>Boss, which called <code>get_ticket(101)</code> and saw size S at 0 and the link to invoice 501.</td></tr>
+<tr><th>Delegations, in order</th><td><ol>
+<li><b>Boss → Inventory.</b> Why: confirm the shortfall and find a vendor, given “linked open invoice 501 to Bulldog Print Co ($840, … 3 days overdue).”</li>
+<li><b>Boss → Accounting.</b> Why: prepare payment of the invoice blocking the only apparel vendor, and check it against the $200 floor.</li>
+<li><b>Boss → Customer Service.</b> Why: draft a reply to Tauhid with the in-stock alternatives (M 5, L 3, XL 2) and the restock timing.</li>
+</ol></td></tr>
+<tr><th>Tools used, and why</th><td><ul>
+<li><b>Inventory:</b>
+  <ul>
+  <li><code>check_stock(size S, qty 1)</code> → short 1.</li>
+  <li><code>check_stock</code> on every size → M 5, L 3, XL 2, for the counteroffer.</li>
+  <li><code>list_vendors</code> → Bulldog Print Co blocked by invoice 501, so it drafted no order.</li>
+  </ul></li>
+<li><b>Accounting:</b>
+  <ul>
+  <li><code>get_bills_due</code> → $3,400 cash; invoice 501 and rent unpaid.</li>
+  <li><code>request_payment</code>(invoice 501, $840) → request 1. Its reason: “Overdue vendor invoice blocks restock; vendor invoice has priority over rent not yet late.” That leaves $2,560, above the floor.</li>
+  </ul></li>
+<li><b>Customer Service:</b> <code>get_ticket</code> and <code>check_stock</code> to confirm the facts, then <code>save_draft</code> (draft 1) to Tauhid: a size M today, or a held S about five days after the restock order.</li>
+<li><b>Boss:</b>
+  <ul>
+  <li><code>update_ticket → awaiting_approval</code>.</li>
+  <li>Closing pass: <code>get_ticket</code>, then <code>list_payments</code> to confirm Will's approval, then <code>update_ticket → resolved</code>.</li>
+  </ul></li>
+</ul></td></tr>
+<tr><th>Final status</th><td><b>Resolved</b>. Will approved request 1 ($840) at 13:43:59 EDT.</td></tr>
+<tr><th>Against Expected</th><td><ul>
+<li><b>Matched:</b>
+  <ul>
+  <li>Boss called first.</li>
+  <li>Inventory, then Accounting, then Customer Service.</li>
+  <li>Facilities not called.</li>
+  <li>Only invoice 501 was requested here; the rent went to ticket 102.</li>
+  <li>The offer of an M today or a held S.</li>
+  <li><code>awaiting_approval</code>, then <code>resolved</code>.</li>
+  </ul></li>
+<li><b>Differed:</b>
+  <ul>
+  <li>Inventory never tried <code>create_purchase_order</code>; we expected a refused call.</li>
+  <li>After invoice 501 was paid, no agent ordered the tee, so Tauhid's size S is still unordered.</li>
+  <li>Boss set <code>awaiting_approval</code> although Will had approved mid-run, so a closing pass was needed.</li>
+  </ul></li>
+</ul></td></tr>
+</table></div><!--/ACTUAL-101-->
+</section>
+
+<!-- ============================== 102 -->
+<section class="tab" id="t102">
+  <h2>Ticket 102 — Rent due in 2 days</h2>
+  <p class="lede">Elm City Properties reminds the shop that rent on the Chapel Street space is due on 2 September.</p>
+  <table>
+    <tr><th>Request</th><td>Pay the monthly rent on lease 1</td></tr>
+    <tr><th>Linked record</th><td>Lease 1: Chapel Street shop, $2,400.00 a month, next due 2 September 2026</td></tr>
+    <tr><th>Cash</th><td>$3,400.00 in checking; $160.00 would remain if invoice 501 is also paid</td></tr>
+  </table>
+
+  <h3>Expected</h3>
+  <div class="box draft">
+    <span class="label ai">Will’s choices (clicked in the prompt questions); wording by the AI</span>
+    <table>
+      <tr><th>Called first</th><td>Boss, which calls <code>get_ticket(102)</code> and sees lease 1, due in 2 days.</td></tr>
+      <tr><th>Delegations expected</th><td><ol>
+        <li><b>Boss → Facilities:</b> confirm lease 1, $2,400, due 2 Sept, with the grace period to 12 Sept (“you can pay rent up to ten days late”). No note to the landlord: “If a landlord gets a note, it’s written by a person.”</li>
+        <li><b>Facilities → Accounting:</b> request the rent. With invoice 501 already waiting, $160 would remain, so the request is flagged “below the $200 floor; Will decides.”</li>
+      </ol></td></tr>
+      <tr><th>Tools expected</th><td><code>get_ticket</code>, <code>get_bills_due</code>, <code>request_payment</code> (flagged <code>below_cash_floor</code>), <code>update_ticket</code> → <code>awaiting_approval</code></td></tr>
+      <tr><th>Not called</th><td class="not">Inventory and Customer Service, because no product or customer is involved.</td></tr>
+    </table>
+  </div>
+
+  <h3>Actual</h3>
+  <!--ACTUAL-102--><div class="box actual"><span class="label">Actual — from the run, read from output/audit_trail.json</span>
+<p class="lede"><b>Two passes.</b> The full run took 13:46:52–13:51:11 EDT, 24,433 tokens. Will approved the rent at 13:50:02 EDT, during the run. The closing pass took 13:55:51–13:56:25 EDT, 10,629 tokens, with Boss alone.</p>
+<table>
+<tr><th>Called first</th><td>Boss, which called <code>get_ticket(102)</code> and saw lease 1, due in 2 days.</td></tr>
+<tr><th>Delegations, in order</th><td><ol>
+<li><b>Boss → Facilities.</b> Why: “Confirm lease, amount, due date and handle per rent workflow.”</li>
+<li><b>Facilities → Accounting.</b> Why: Facilities cannot request payments. It asked Accounting to “confirm and handle the rent payment request … $2,400 due 2026-09-02, with the ten-day-late grace deadline 2026-09-12.”</li>
+</ol></td></tr>
+<tr><th>Tools used, and why</th><td><ul>
+<li><b>Facilities:</b> <code>get_ticket</code> and <code>get_bills_due</code> → lease 1: $2,400, due 2 Sept, grace to 12 Sept.</li>
+<li><b>Accounting:</b>
+  <ul>
+  <li><code>get_bills_due</code> → $2,560 after invoice 501.</li>
+  <li><code>request_payment</code>(rent, lease 1, $2,400) → request 2, flagged <code>below_cash_floor</code>, because checking would fall to $160. “Will must decide.”</li>
+  </ul></li>
+<li><b>Boss:</b>
+  <ul>
+  <li><code>update_ticket → awaiting_approval</code>.</li>
+  <li>Closing pass: <code>get_ticket</code>, then <code>list_payments</code> → rent paid → <code>update_ticket → resolved</code>.</li>
+  </ul></li>
+</ul></td></tr>
+<tr><th>Final status</th><td><b>Resolved</b>. Will approved request 2 ($2,400) at 13:50:02 EDT, knowing it would cross the $200 floor.</td></tr>
+<tr><th>Against Expected</th><td><ul>
+<li><b>Matched:</b>
+  <ul>
+  <li>Boss called first.</li>
+  <li>Facilities, then Facilities → Accounting.</li>
+  <li>Inventory and Customer Service not called.</li>
+  <li>No note to the landlord.</li>
+  <li><code>request_payment</code> flagged below the floor.</li>
+  <li><code>awaiting_approval</code>, then <code>resolved</code>.</li>
+  </ul></li>
+<li><b>Differed:</b> nothing in the agents' work. A closing pass was needed only because Boss set the status before Will approved.</li>
+</ul></td></tr>
+</table></div><!--/ACTUAL-102-->
+</section>
+
+<!-- ============================== 103 -->
+<section class="tab" id="t103">
+  <h2>Ticket 103 — Bulk hoodie discount</h2>
+  <p class="lede">The Yale AI Club wants 20 navy hoodies in size M and asks for a bulk discount. The shop has 8.</p>
+  <table>
+    <tr><th>Request</th><td>20 × CC-HOOD-NAVY, size M, at a bulk discount ($58.00 list, $22.00 unit cost)</td></tr>
+    <tr><th>Stock</th><td>8 on hand in size M, so the shop is short by 12. It holds 4 in S, 14 in L, and 6 in XL.</td></tr>
+    <tr><th>Restock</th><td>Bulldog Print Co is blocked by invoice 501. Restocking 12 would cost $264.00, more than the $160.00 left after rent and the invoice.</td></tr>
+    <tr><th>Discount bounds</th><td>Break-even is 62% off. At 15% off, a hoodie costs $49.30, a 55% margin, and 20 cost $986.00.</td></tr>
+  </table>
+
+  <h3>Expected</h3>
+  <div class="box draft">
+    <span class="label ai">Will’s choices (clicked in the prompt questions); wording by the AI</span>
+    <table>
+      <tr><th>Called first</th><td>Boss, which calls <code>get_ticket(103)</code> and sees the 12-hoodie shortfall.</td></tr>
+      <tr><th>Delegations expected</th><td><ol>
+        <li><b>Boss → Inventory:</b> check every size and the vendors. Inventory finds 8 in M and 14 in L, with Bulldog Print Co blocked.</li>
+        <li><b>Boss → Accounting:</b> price the discount and check cash. The order counts as bulk (10 units or more), and Accounting may give up to 20% off ($46.40 each, a 53% margin). Accounting calls <code>quote_price</code> and <code>get_bills_due</code>. No restock is paid; it would cross the $200 floor.</li>
+        <li><b>Boss → Customer Service:</b> draft a formal offer to the club (“counteroffer with what we have and a wait time for the new stuff”): 8 M now plus 12 L now, or 8 M now and 12 M about 5 days after restock, at the discount Boss decides.</li>
+      </ol></td></tr>
+      <tr><th>Tools expected</th><td><code>get_ticket</code>, <code>check_stock</code>, <code>list_vendors</code>, <code>quote_price</code>, <code>get_bills_due</code>, <code>save_draft</code>, <code>update_ticket</code> → <code>in_progress</code> (waiting on the club’s answer)</td></tr>
+      <tr><th>Not called</th><td class="not">Facilities, and the <code>request_payment</code> tool, because no money should go out for this ticket.</td></tr>
+    </table>
+  </div>
+
+  <h3>Actual</h3>
+  <!--ACTUAL-103--><div class="box actual"><span class="label">Actual — from the run, read from output/audit_trail.json</span>
+<p class="lede"><b>One run</b>, 13:51:11–13:55:03 EDT, 40,346 tokens, completed.</p>
+<table>
+<tr><th>Called first</th><td>Boss, which called <code>get_ticket(103)</code> and saw 8 M on hand against 20 requested.</td></tr>
+<tr><th>Delegations, in order</th><td><ol>
+<li><b>Boss → Inventory.</b> Why: “Confirm stock in every size and vendors/restock lead time.”</li>
+<li><b>Boss → Accounting.</b> Why: price the bulk discount within policy and check cash.</li>
+<li><b>Boss → Customer Service.</b> Why: draft the counteroffer to the club with the stock, the wait, and the 20% price.</li>
+</ol></td></tr>
+<tr><th>Tools used, and why</th><td><ul>
+<li><b>Inventory:</b>
+  <ul>
+  <li><code>get_ticket</code>.</li>
+  <li><code>check_stock(qty 20)</code> → M 8 (short 12), S 4, L 14, XL 6.</li>
+  <li><code>list_vendors</code> → Bulldog Print Co unblocked, because invoice 501 was paid at 13:43:59; arrival 5 Sept.</li>
+  </ul></li>
+<li><b>Accounting:</b>
+  <ul>
+  <li><code>get_bills_due</code> → $160 cash.</li>
+  <li><code>quote_price</code>, first with the vendor's name as the SKU: refused.</li>
+  <li><code>get_ticket</code>, to find the right SKU.</li>
+  <li><code>quote_price(CC-HOOD-NAVY, 20, 20% off)</code> → $46.40 each, $928, a 53% margin.</li>
+  <li>No payment requested.</li>
+  </ul></li>
+<li><b>Customer Service:</b> <code>get_ticket</code>, then <code>save_draft</code> (draft 2) to the Yale AI Club.</li>
+<li><b>Boss:</b> <code>update_ticket → resolved</code>, because the offer draft was saved, under Will's changed rule.</li>
+</ul></td></tr>
+<tr><th>Final status</th><td><b>Resolved</b>, with no money moved.</td></tr>
+<tr><th>Against Expected</th><td><ul>
+<li><b>Matched:</b>
+  <ul>
+  <li>Boss called first.</li>
+  <li>Inventory, then Accounting, then Customer Service.</li>
+  <li>Facilities not called.</li>
+  <li>No <code>request_payment</code>.</li>
+  <li>The counteroffer included other sizes.</li>
+  </ul></li>
+<li><b>Differed:</b>
+  <ul>
+  <li>The ticket ended <b>resolved</b> rather than in progress, because Will changed the rule after an earlier run left it waiting and reruns made duplicate drafts.</li>
+  <li>Accounting went straight to the 20% maximum.</li>
+  <li>Accounting first passed the vendor name as a SKU and had to retry.</li>
+  <li>Inventory found the vendor unblocked, because Will paid invoice 501 during ticket 101.</li>
+  </ul></li>
+</ul></td></tr>
+</table></div><!--/ACTUAL-103-->
+</section>
+
+<!-- ============================== cash / reflection -->
+<section class="tab" id="cash">
+  <h2>Cash</h2>
+  <p class="lede">Where the money went during the run, item by item.</p>
+  <!--ACTUAL-cash--><div class="box actual"><span class="label">Cash — checked against cash_accounts</span>
+<p class="lede">Checking moved only when Will approved a simulated payment. Every figure below comes from the database, and the ending balance matches <code>cash_accounts</code>.</p>
+<table class="ledger">
+<tr><th style="width:12%">Item</th><th>How and why cash changed</th><th class="num" style="width:13%">Change</th><th class="num" style="width:13%">Balance</th></tr>
+<tr><td><b>Start</b></td><td>Checking at the reset, from the original database (<code>campus_customs.db</code>), shop date 31 Aug 2026.</td><td class="num"></td><td class="num"><b>$3,400.00</b></td></tr>
+<tr><td>Ticket 101</td><td>Bulldog Print Co&#x27;s invoice 501, 3 days overdue on 31 Aug; it blocked every apparel restock, so Will&#x27;s rule pays it before rent that is not yet late. Requested by Accounting (request 1, filed under ticket 101); approved by Will Barker at 13:43:59 EDT.</td><td class='num'>−$840.00</td><td class='num'>$2,560.00</td></tr><tr><td>Ticket 102</td><td>September rent on the Chapel Street shop (lease 1), due 2 Sept; rent comes first “because if you don&#x27;t have a shop, you don&#x27;t have a business”. Requested by Accounting (request 2, filed under ticket 102); approved by Will Barker at 13:50:02 EDT.</td><td class='num'>−$2,400.00</td><td class='num'>$160.00</td></tr>
+<tr><td>Ticket 103</td><td>No payment. The offer to the club is a quote, not cash; the 12-hoodie restock ($308 with spares) was not ordered, since it exceeds the $160 left. Resolved without moving money.</td><td class="num">$0.00</td><td class="num">$160.00</td></tr>
+<tr><td><b>End</b></td><td>Checking in <code>cash_accounts</code> after the run, dated 2026-08-31: $3,400.00 − 3,240.00 = $160.00. This is $40.00 below the $200 floor; Will approved the rent knowing it would cross the floor.</td><td class="num"><b>−$3,240.00</b></td><td class="num"><b>$160.00</b></td></tr>
+</table></div><!--/ACTUAL-cash-->
+</section>
+
+<section class="tab" id="reflection">
+  <h2>Reflection</h2>
+  <p class="lede">Will’s reflection on Expected versus Actual, in his own words.</p>
+  <!--REFLECTION--><div class="empty">No reflection saved yet.</div><!--/REFLECTION-->
+  <h3>Write or revise</h3>
+  <div class="box">
+    <textarea id="reflection-text" rows="14" style="width:100%; font: inherit; padding: 10px; border: 1px solid var(--rule); background: #fffdf6;" placeholder="Write your reflection here, in your own words. Leave a blank line between paragraphs."></textarea>
+    <div style="display:flex; gap:12px; align-items:center; margin-top:8px;">
+      <button id="reflection-save" style="font: inherit; padding: 6px 16px; background: var(--red); color: var(--parchment); border: 0; border-radius: 4px; cursor: pointer;">Save reflection</button>
+      <span id="reflection-status" style="color: var(--muted); font-style: italic;"></span>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const box = document.getElementById('reflection-text');
+      const status = document.getElementById('reflection-status');
+      const saved = document.querySelector('.reflection-saved');
+      if (saved) box.value = [...saved.querySelectorAll('p')].map(p => p.innerText).join('\n\n');
+      else box.value = localStorage.getItem('cc-reflection-draft') || '';
+      box.addEventListener('input', () => localStorage.setItem('cc-reflection-draft', box.value));
+      if (location.protocol === 'file:') {
+        status.textContent = 'To save, open this page at http://localhost:8000/output/desk_tickets.html#reflection (your draft is kept here meanwhile).';
+      }
+      document.getElementById('reflection-save').addEventListener('click', async () => {
+        if (!box.value.trim()) { status.textContent = 'Nothing to save yet.'; return; }
+        status.textContent = 'Saving…';
+        try {
+          const res = await fetch('/api/reflection', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: box.value }) });
+          if (!res.ok) throw new Error(res.status);
+          localStorage.removeItem('cc-reflection-draft');
+          status.textContent = 'Saved. Reloading…';
+          setTimeout(() => { location.hash = 'reflection'; location.reload(); }, 600);
+        } catch (e) { status.textContent = 'Could not save (' + e.message + '). Is the backend running on port 8000?'; }
+      });
+    })();
+  </script>
+</section>
+
+<footer>Facts come from data/campus_customs_new.db through the campus-customs MCP server. The “Actual” sections are filled from output/audit_trail.json after a run.</footer>
+</main>
+<script>
+  document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("click", () => {
+    document.querySelectorAll("nav button, section.tab").forEach(el => el.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.tab).classList.add("active");
+  }));
+  // Open a tab straight from the address, e.g. desk_tickets.html#reflection
+  const start = document.querySelector(`nav button[data-tab="${location.hash.slice(1)}"]`);
+  if (start) start.click();
+</script>
+</body>
+</html>

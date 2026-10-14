@@ -1,0 +1,1031 @@
+{
+  "server": "campus-customs (mcp_server/server.py, via .mcp.json over stdio)",
+  "sections": {
+    "vibe_coder_calls": "Claude Code itself called these tools through its MCP connection (copied from output/mcp_vibe_coder_calls.json).",
+    "script_calls": "mcp_server/smoke_test.py called every tool through the same .mcp.json connection, on a scratch copy of the database."
+  },
+  "vibe_coder_calls": {
+    "caller": "Claude Code (the vibe coder), calling the campus-customs MCP server directly through .mcp.json",
+    "called_on": "2026-10-06",
+    "database": "data/campus_customs_new.db (working copy; all four calls are read-only)",
+    "note": "Claude Code's connection loaded the first version of the server, which had 3 tools. The 8 tools added later were tested by mcp_server/smoke_test.py; see script_calls in smoke.json.",
+    "calls": [
+      {
+        "prompt": "Boss: What tickets are open on the board today?",
+        "tool": "mcp__campus-customs__list_open_tickets",
+        "arguments": {},
+        "output": {
+          "date_today": "2026-08-31",
+          "status": "open",
+          "count": 3,
+          "tickets": [
+            {
+              "id": 101,
+              "type": "customer_order",
+              "requester": "Tauhid Zaman",
+              "subject": "Bulldog tee",
+              "sku": "CC-TEE-WHITE",
+              "size": "S",
+              "qty": 1,
+              "lease_id": null,
+              "invoice_id": 501,
+              "status": "open",
+              "notes": "Needs a tee in size S.",
+              "created_at": "2026-08-31T09:15:00-04:00"
+            },
+            {
+              "id": 102,
+              "type": "rent_notice",
+              "requester": "Elm City Properties",
+              "subject": "Rent due",
+              "sku": null,
+              "size": null,
+              "qty": null,
+              "lease_id": 1,
+              "invoice_id": null,
+              "status": "open",
+              "notes": "Email: shop rent due in 2 days.",
+              "created_at": "2026-08-31T11:05:00-04:00"
+            },
+            {
+              "id": 103,
+              "type": "price_override",
+              "requester": "Yale AI Club",
+              "subject": "Bulk hoodie discount",
+              "sku": "CC-HOOD-NAVY",
+              "size": "M",
+              "qty": 20,
+              "lease_id": null,
+              "invoice_id": null,
+              "status": "open",
+              "notes": "Student org wants 20 hoodies, size M, asking for a bulk discount.",
+              "created_at": "2026-08-31T16:55:00-04:00"
+            }
+          ]
+        }
+      },
+      {
+        "prompt": "Inventory: Ticket 101 needs one Classic Bulldog Tee in size S. Do we have it?",
+        "tool": "mcp__campus-customs__check_stock",
+        "arguments": {
+          "sku": "CC-TEE-WHITE",
+          "size": "S",
+          "qty_needed": 1
+        },
+        "output": {
+          "sku": "CC-TEE-WHITE",
+          "name": "Classic Bulldog Tee",
+          "found": true,
+          "unit_cost": 8,
+          "list_price": 28,
+          "sizes": [
+            {
+              "size": "S",
+              "qty_on_hand": 0,
+              "location": "Aisle B"
+            }
+          ],
+          "qty_needed": 1,
+          "shortfall": 1
+        }
+      },
+      {
+        "prompt": "Inventory: Ticket 103 wants 20 navy hoodies in size M. How many do we have, and what do they cost us?",
+        "tool": "mcp__campus-customs__check_stock",
+        "arguments": {
+          "sku": "CC-HOOD-NAVY",
+          "size": "M",
+          "qty_needed": 20
+        },
+        "output": {
+          "sku": "CC-HOOD-NAVY",
+          "name": "Basic Hoodie Big Yale",
+          "found": true,
+          "unit_cost": 22,
+          "list_price": 58,
+          "sizes": [
+            {
+              "size": "M",
+              "qty_on_hand": 8,
+              "location": "Aisle A"
+            }
+          ],
+          "qty_needed": 20,
+          "shortfall": 12
+        }
+      },
+      {
+        "prompt": "Accounting: Which bills are unpaid, is any vendor blocked from shipping, and how much cash is left if we pay them all?",
+        "tool": "mcp__campus-customs__get_bills_due",
+        "arguments": {},
+        "output": {
+          "date_today": "2026-08-31",
+          "cash_accounts": [
+            {
+              "name": "checking",
+              "balance": 3400,
+              "date": "2026-08-31"
+            }
+          ],
+          "cash_on_hand": 3400,
+          "open_invoices": [
+            {
+              "invoice_id": 501,
+              "vendor_id": 1,
+              "vendor_name": "Bulldog Print Co",
+              "amount": 840,
+              "due_date": "2026-08-28",
+              "days_overdue": 3,
+              "overdue": true,
+              "description": "Rush reprint CC-TEE-WHITE S",
+              "vendor_blocked": true,
+              "vendor_lead_days": 5
+            }
+          ],
+          "rent_due": [
+            {
+              "lease_id": 1,
+              "space_name": "Chapel Street shop",
+              "landlord": "Elm City Properties",
+              "amount": 2400,
+              "next_due": "2026-09-02",
+              "days_until_due": 2
+            }
+          ],
+          "total_due": 3240,
+          "cash_after_all_bills": 160
+        }
+      }
+    ]
+  },
+  "script_run_at": "2026-10-14T18:06:59+00:00",
+  "database": "scratch copy of data/campus_customs.db with data/schema_additions.sql",
+  "note": "Payments are simulated database updates; no real money moves. approve_payment_request and reject_payment_request are human-only functions, not MCP tools, and are absent from tools_listed.",
+  "tools_listed": [
+    "list_open_tickets",
+    "get_ticket",
+    "check_stock",
+    "list_vendors",
+    "get_bills_due",
+    "quote_price",
+    "list_payments",
+    "request_payment",
+    "create_purchase_order",
+    "save_draft",
+    "update_ticket"
+  ],
+  "every_tool_called": true,
+  "human_only_functions_hidden_from_agents": true,
+  "working_copy_unchanged": true,
+  "script_calls": [
+    {
+      "prompt": "Boss: What tickets are open on the board today?",
+      "actor": "agent via MCP",
+      "tool": "list_open_tickets",
+      "arguments": {},
+      "output": {
+        "date_today": "2026-08-31",
+        "status": "open",
+        "count": 3,
+        "tickets": [
+          {
+            "id": 101,
+            "type": "customer_order",
+            "requester": "Tauhid Zaman",
+            "subject": "Bulldog tee",
+            "sku": "CC-TEE-WHITE",
+            "size": "S",
+            "qty": 1,
+            "lease_id": null,
+            "invoice_id": 501,
+            "status": "open",
+            "notes": "Needs a tee in size S.",
+            "created_at": "2026-08-31T09:15:00-04:00"
+          },
+          {
+            "id": 102,
+            "type": "rent_notice",
+            "requester": "Elm City Properties",
+            "subject": "Rent due",
+            "sku": null,
+            "size": null,
+            "qty": null,
+            "lease_id": 1,
+            "invoice_id": null,
+            "status": "open",
+            "notes": "Email: shop rent due in 2 days.",
+            "created_at": "2026-08-31T11:05:00-04:00"
+          },
+          {
+            "id": 103,
+            "type": "price_override",
+            "requester": "Yale AI Club",
+            "subject": "Bulk hoodie discount",
+            "sku": "CC-HOOD-NAVY",
+            "size": "M",
+            "qty": 20,
+            "lease_id": null,
+            "invoice_id": null,
+            "status": "open",
+            "notes": "Student org wants 20 hoodies, size M, asking for a bulk discount.",
+            "created_at": "2026-08-31T16:55:00-04:00"
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Boss: Show me everything linked to ticket 101.",
+      "actor": "agent via MCP",
+      "tool": "get_ticket",
+      "arguments": {
+        "ticket_id": 101
+      },
+      "output": {
+        "date_today": "2026-08-31",
+        "ticket": {
+          "id": 101,
+          "type": "customer_order",
+          "requester": "Tauhid Zaman",
+          "subject": "Bulldog tee",
+          "sku": "CC-TEE-WHITE",
+          "size": "S",
+          "qty": 1,
+          "lease_id": null,
+          "invoice_id": 501,
+          "status": "open",
+          "notes": "Needs a tee in size S.",
+          "created_at": "2026-08-31T09:15:00-04:00"
+        },
+        "invoice": {
+          "id": 501,
+          "vendor_id": 1,
+          "amount": 840.0,
+          "due_date": "2026-08-28",
+          "status": "open",
+          "description": "Rush reprint CC-TEE-WHITE S",
+          "vendor_name": "Bulldog Print Co",
+          "vendor_lead_days": 5,
+          "days_overdue": 3
+        },
+        "inventory": {
+          "sku": "CC-TEE-WHITE",
+          "name": "Classic Bulldog Tee",
+          "size": "S",
+          "qty": 0,
+          "location": "Aisle B"
+        },
+        "pricing": {
+          "sku": "CC-TEE-WHITE",
+          "unit_cost": 8.0,
+          "list_price": 28.0
+        },
+        "shortfall": 1,
+        "drafts": [],
+        "payment_requests": [],
+        "purchase_orders": []
+      }
+    },
+    {
+      "prompt": "Inventory: Ticket 101 needs one Classic Bulldog Tee in size S. Do we have it?",
+      "actor": "agent via MCP",
+      "tool": "check_stock",
+      "arguments": {
+        "sku": "CC-TEE-WHITE",
+        "size": "S",
+        "qty_needed": 1
+      },
+      "output": {
+        "sku": "CC-TEE-WHITE",
+        "name": "Classic Bulldog Tee",
+        "found": true,
+        "unit_cost": 8.0,
+        "list_price": 28.0,
+        "sizes": [
+          {
+            "size": "S",
+            "qty_on_hand": 0,
+            "location": "Aisle B"
+          }
+        ],
+        "qty_needed": 1,
+        "shortfall": 1
+      }
+    },
+    {
+      "prompt": "Inventory: Ticket 103 wants 20 navy hoodies in size M. How many do we have, and what do they cost us?",
+      "actor": "agent via MCP",
+      "tool": "check_stock",
+      "arguments": {
+        "sku": "CC-HOOD-NAVY",
+        "size": "M",
+        "qty_needed": 20
+      },
+      "output": {
+        "sku": "CC-HOOD-NAVY",
+        "name": "Basic Hoodie Big Yale",
+        "found": true,
+        "unit_cost": 22.0,
+        "list_price": 58.0,
+        "sizes": [
+          {
+            "size": "M",
+            "qty_on_hand": 8,
+            "location": "Aisle A"
+          }
+        ],
+        "qty_needed": 20,
+        "shortfall": 12
+      }
+    },
+    {
+      "prompt": "Inventory: Which vendors can ship, and when would an order placed today arrive?",
+      "actor": "agent via MCP",
+      "tool": "list_vendors",
+      "arguments": {},
+      "output": {
+        "date_today": "2026-08-31",
+        "vendors": [
+          {
+            "vendor_id": 1,
+            "name": "Bulldog Print Co",
+            "specialty": "apparel reprint",
+            "lead_days": 5,
+            "open_invoices": [
+              {
+                "id": 501,
+                "amount": 840.0,
+                "due_date": "2026-08-28"
+              }
+            ],
+            "blocked": true,
+            "earliest_arrival_if_ordered_today": null
+          },
+          {
+            "vendor_id": 2,
+            "name": "Elm City Gifts",
+            "specialty": "mugs and small goods",
+            "lead_days": 3,
+            "open_invoices": [],
+            "blocked": false,
+            "earliest_arrival_if_ordered_today": "2026-09-03"
+          },
+          {
+            "vendor_id": 3,
+            "name": "QuickShip CT",
+            "specialty": "local courier",
+            "lead_days": 1,
+            "open_invoices": [],
+            "blocked": false,
+            "earliest_arrival_if_ordered_today": "2026-09-01"
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Accounting: Which bills are unpaid, is any vendor blocked, and how much cash is left if we pay them all?",
+      "actor": "agent via MCP",
+      "tool": "get_bills_due",
+      "arguments": {},
+      "output": {
+        "date_today": "2026-08-31",
+        "cash_accounts": [
+          {
+            "name": "checking",
+            "balance": 3400.0,
+            "date": "2026-08-31"
+          }
+        ],
+        "cash_on_hand": 3400.0,
+        "open_invoices": [
+          {
+            "invoice_id": 501,
+            "vendor_id": 1,
+            "vendor_name": "Bulldog Print Co",
+            "amount": 840.0,
+            "due_date": "2026-08-28",
+            "days_overdue": 3,
+            "overdue": true,
+            "description": "Rush reprint CC-TEE-WHITE S",
+            "vendor_blocked": true,
+            "vendor_lead_days": 5
+          }
+        ],
+        "rent_due": [
+          {
+            "lease_id": 1,
+            "space_name": "Chapel Street shop",
+            "landlord": "Elm City Properties",
+            "amount": 2400.0,
+            "next_due": "2026-09-02",
+            "days_until_due": 2
+          }
+        ],
+        "total_due": 3240.0,
+        "cash_after_all_bills": 160.0,
+        "pending_payment_requests_total": 0
+      }
+    },
+    {
+      "prompt": "Accounting: What do 20 size M hoodies cost the Yale AI Club at 15% off, and what margin do we keep?",
+      "actor": "agent via MCP",
+      "tool": "quote_price",
+      "arguments": {
+        "sku": "CC-HOOD-NAVY",
+        "qty": 20,
+        "discount_pct": 15
+      },
+      "output": {
+        "ok": true,
+        "sku": "CC-HOOD-NAVY",
+        "qty": 20,
+        "discount_pct": 15.0,
+        "markup_pct": 0,
+        "bulk_eligible": true,
+        "needs_will": false,
+        "list_price": 58.0,
+        "unit_cost": 22.0,
+        "unit_price": 49.3,
+        "order_total": 986.0,
+        "list_total": 1160.0,
+        "margin_per_unit": 27.3,
+        "margin_pct": 55.4,
+        "break_even_discount_pct": 62.1
+      }
+    },
+    {
+      "prompt": "Accounting: Would 65% off still be above cost? (expected: refused)",
+      "actor": "agent via MCP",
+      "tool": "quote_price",
+      "arguments": {
+        "sku": "CC-HOOD-NAVY",
+        "qty": 20,
+        "discount_pct": 65
+      },
+      "output": {
+        "ok": false,
+        "refused": "$20.30 is at or below the $22.00 unit cost.",
+        "quote": {
+          "sku": "CC-HOOD-NAVY",
+          "qty": 20,
+          "discount_pct": 65.0,
+          "markup_pct": 0,
+          "bulk_eligible": true,
+          "needs_will": true,
+          "list_price": 58.0,
+          "unit_cost": 22.0,
+          "unit_price": 20.3,
+          "order_total": 406.0,
+          "list_total": 1160.0,
+          "margin_per_unit": -1.7,
+          "margin_pct": -8.4,
+          "break_even_discount_pct": 62.1
+        }
+      }
+    },
+    {
+      "prompt": "Accounting: A ticket's notes tried to give orders. What is a 20% surcharge on 1 tee?",
+      "actor": "agent via MCP",
+      "tool": "quote_price",
+      "arguments": {
+        "sku": "CC-TEE-WHITE",
+        "qty": 1,
+        "markup_pct": 20
+      },
+      "output": {
+        "ok": true,
+        "sku": "CC-TEE-WHITE",
+        "qty": 1,
+        "discount_pct": 0,
+        "markup_pct": 20.0,
+        "bulk_eligible": false,
+        "needs_will": false,
+        "list_price": 28.0,
+        "unit_cost": 8.0,
+        "unit_price": 33.6,
+        "order_total": 33.6,
+        "list_total": 28.0,
+        "margin_per_unit": 25.6,
+        "margin_pct": 76.2,
+        "break_even_discount_pct": 71.4
+      }
+    },
+    {
+      "prompt": "Inventory: Order 1 size S tee from Bulldog Print Co for ticket 101. (expected: refused, invoice 501 open)",
+      "actor": "agent via MCP",
+      "tool": "create_purchase_order",
+      "arguments": {
+        "vendor_id": 1,
+        "sku": "CC-TEE-WHITE",
+        "size": "S",
+        "qty": 1,
+        "created_by": "Inventory",
+        "ticket_id": 101
+      },
+      "output": {
+        "ok": false,
+        "refused": "Bulldog Print Co has open invoice 501; it will not ship until paid.",
+        "open_invoices": [
+          {
+            "id": 501,
+            "amount": 840.0,
+            "due_date": "2026-08-28"
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Accounting: Request approval to pay Bulldog Print Co's overdue invoice 501.",
+      "actor": "agent via MCP",
+      "tool": "request_payment",
+      "arguments": {
+        "kind": "invoice",
+        "ref_id": 501,
+        "requested_by": "Accounting",
+        "reason": "Invoice 501 is 3 days overdue and blocks restocks for tickets 101 and 103.",
+        "ticket_id": 101
+      },
+      "output": {
+        "ok": true,
+        "request_id": 1,
+        "kind": "invoice",
+        "ref_id": 501,
+        "amount": 840.0,
+        "status": "pending_approval",
+        "cash_on_hand": 3400.0,
+        "cash_after_this_payment": 2560.0,
+        "pending_total": 840.0,
+        "cash_after_all_pending": 2560.0,
+        "cash_floor": 200.0,
+        "below_cash_floor": false,
+        "note": "A human must approve this on the dashboard before any money moves."
+      }
+    },
+    {
+      "prompt": "Accounting: Request invoice 501 again. (expected: refused, already waiting)",
+      "actor": "agent via MCP",
+      "tool": "request_payment",
+      "arguments": {
+        "kind": "invoice",
+        "ref_id": 501,
+        "requested_by": "Accounting",
+        "reason": "duplicate check",
+        "ticket_id": 101
+      },
+      "output": {
+        "ok": false,
+        "refused": "Payment request 1 for this invoice is already waiting."
+      }
+    },
+    {
+      "prompt": "Facilities: Request approval to pay the Chapel Street shop rent.",
+      "actor": "agent via MCP",
+      "tool": "request_payment",
+      "arguments": {
+        "kind": "rent",
+        "ref_id": 1,
+        "requested_by": "Facilities",
+        "reason": "September rent of $2,400 is due 2026-09-02.",
+        "ticket_id": 102
+      },
+      "output": {
+        "ok": true,
+        "request_id": 2,
+        "kind": "rent",
+        "ref_id": 1,
+        "amount": 2400.0,
+        "status": "pending_approval",
+        "cash_on_hand": 3400.0,
+        "cash_after_this_payment": 1000.0,
+        "pending_total": 3240.0,
+        "cash_after_all_pending": 160.0,
+        "cash_floor": 200.0,
+        "below_cash_floor": true,
+        "note": "Below the $200 floor; Will decides. A human must approve this on the dashboard before any money moves."
+      }
+    },
+    {
+      "prompt": "Accounting: Show every payment and every request waiting for a human.",
+      "actor": "agent via MCP",
+      "tool": "list_payments",
+      "arguments": {},
+      "output": {
+        "date_today": "2026-08-31",
+        "cash_on_hand": 3400.0,
+        "payments": [],
+        "payment_requests": [
+          {
+            "id": 2,
+            "kind": "rent",
+            "ref_id": 1,
+            "ticket_id": 102,
+            "amount": 2400.0,
+            "account": "checking",
+            "requested_by": "Facilities",
+            "reason": "September rent of $2,400 is due 2026-09-02.",
+            "status": "pending_approval",
+            "requested_at": "2026-08-31",
+            "decided_by": null,
+            "decided_at": null,
+            "decision_note": null,
+            "payment_id": null
+          },
+          {
+            "id": 1,
+            "kind": "invoice",
+            "ref_id": 501,
+            "ticket_id": 101,
+            "amount": 840.0,
+            "account": "checking",
+            "requested_by": "Accounting",
+            "reason": "Invoice 501 is 3 days overdue and blocks restocks for tickets 101 and 103.",
+            "status": "pending_approval",
+            "requested_at": "2026-08-31",
+            "decided_by": null,
+            "decided_at": null,
+            "decision_note": null,
+            "payment_id": null
+          }
+        ],
+        "pending_total": 3240.0
+      }
+    },
+    {
+      "prompt": "HUMAN: approve request 1 (invoice 501, $840).",
+      "actor": "human",
+      "tool": "approve_payment_request",
+      "arguments": {
+        "request_id": 1,
+        "approved_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)"
+      },
+      "output": {
+        "ok": true,
+        "request_id": 1,
+        "payment_id": 1,
+        "amount": 840.0,
+        "approved_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)",
+        "cash_on_hand": 2560.0,
+        "invoice_id": 501,
+        "invoice_status": "paid"
+      }
+    },
+    {
+      "prompt": "HUMAN: approve request 2 (rent, $2,400).",
+      "actor": "human",
+      "tool": "approve_payment_request",
+      "arguments": {
+        "request_id": 2,
+        "approved_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)"
+      },
+      "output": {
+        "ok": true,
+        "request_id": 2,
+        "payment_id": 2,
+        "amount": 2400.0,
+        "approved_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)",
+        "cash_on_hand": 160.0,
+        "lease_id": 1,
+        "paid_due_date": "2026-09-02",
+        "next_due": "2026-10-02"
+      }
+    },
+    {
+      "prompt": "Inventory: Invoice 501 is paid. Order 1 size S tee from Bulldog Print Co for ticket 101.",
+      "actor": "agent via MCP",
+      "tool": "create_purchase_order",
+      "arguments": {
+        "vendor_id": 1,
+        "sku": "CC-TEE-WHITE",
+        "size": "S",
+        "qty": 1,
+        "created_by": "Inventory",
+        "ticket_id": 101
+      },
+      "output": {
+        "ok": true,
+        "purchase_order_id": 1,
+        "vendor": "Bulldog Print Co",
+        "sku": "CC-TEE-WHITE",
+        "size": "S",
+        "qty": 1,
+        "unit_cost": 8.0,
+        "total": 8.0,
+        "status": "draft",
+        "expected_arrival_if_paid_today": "2026-09-05",
+        "cash_on_hand": 160.0,
+        "cash_after_all_pending": 160.0
+      }
+    },
+    {
+      "prompt": "Inventory: Order 12 size M hoodies from Bulldog Print Co for ticket 103.",
+      "actor": "agent via MCP",
+      "tool": "create_purchase_order",
+      "arguments": {
+        "vendor_id": 1,
+        "sku": "CC-HOOD-NAVY",
+        "size": "M",
+        "qty": 12,
+        "created_by": "Inventory",
+        "ticket_id": 103
+      },
+      "output": {
+        "ok": true,
+        "purchase_order_id": 2,
+        "vendor": "Bulldog Print Co",
+        "sku": "CC-HOOD-NAVY",
+        "size": "M",
+        "qty": 12,
+        "unit_cost": 22.0,
+        "total": 264.0,
+        "status": "draft",
+        "expected_arrival_if_paid_today": "2026-09-05",
+        "cash_on_hand": 160.0,
+        "cash_after_all_pending": 160.0
+      }
+    },
+    {
+      "prompt": "Accounting: Request approval to pay for the 12-hoodie purchase order.",
+      "actor": "agent via MCP",
+      "tool": "request_payment",
+      "arguments": {
+        "kind": "purchase_order",
+        "ref_id": 2,
+        "requested_by": "Accounting",
+        "reason": "Restock 12 size M hoodies for ticket 103.",
+        "ticket_id": 103
+      },
+      "output": {
+        "ok": true,
+        "request_id": 3,
+        "kind": "purchase_order",
+        "ref_id": 2,
+        "amount": 264.0,
+        "status": "pending_approval",
+        "cash_on_hand": 160.0,
+        "cash_after_this_payment": -104.0,
+        "pending_total": 264.0,
+        "cash_after_all_pending": -104.0,
+        "cash_floor": 200.0,
+        "below_cash_floor": true,
+        "note": "Below the $200 floor; Will decides. A human must approve this on the dashboard before any money moves."
+      }
+    },
+    {
+      "prompt": "HUMAN: approve request 3 ($264 hoodie order). (expected: refused, only $160 left)",
+      "actor": "human",
+      "tool": "approve_payment_request",
+      "arguments": {
+        "request_id": 3,
+        "approved_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)"
+      },
+      "output": {
+        "ok": false,
+        "refused": "$264.00 exceeds the $160.00 in checking; no negative balances.",
+        "request_id": 3,
+        "cash_on_hand": 160.0,
+        "amount": 264.0
+      }
+    },
+    {
+      "prompt": "HUMAN: reject request 3 so the order goes back to draft.",
+      "actor": "human",
+      "tool": "reject_payment_request",
+      "arguments": {
+        "request_id": 3,
+        "rejected_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)",
+        "note": "Not enough cash; offer the club other sizes instead."
+      },
+      "output": {
+        "ok": true,
+        "request_id": 3,
+        "status": "rejected"
+      }
+    },
+    {
+      "prompt": "Customer Service: Save a draft to Tauhid Zaman about the size S tee.",
+      "actor": "agent via MCP",
+      "tool": "save_draft",
+      "arguments": {
+        "ticket_id": 101,
+        "recipient": "Tauhid Zaman",
+        "author": "Customer Service",
+        "body": "Hi Tauhid, the Classic Bulldog Tee in size S is out of stock. We have ordered more and expect it by 2026-09-05. We will hold one for you."
+      },
+      "output": {
+        "ok": true,
+        "draft_id": 1,
+        "ticket_id": 101,
+        "recipient": "Tauhid Zaman",
+        "status": "draft",
+        "sent": false
+      }
+    },
+    {
+      "prompt": "Facilities: Mark ticket 102 resolved now that rent is paid.",
+      "actor": "agent via MCP",
+      "tool": "update_ticket",
+      "arguments": {
+        "ticket_id": 102,
+        "status": "resolved",
+        "author": "Facilities",
+        "note": "September rent of $2,400 paid after human approval; next due 2026-10-02."
+      },
+      "output": {
+        "ok": true,
+        "ticket_id": 102,
+        "old_status": "open",
+        "status": "resolved",
+        "notes": "Email: shop rent due in 2 days.\n[2026-08-31] Facilities: September rent of $2,400 paid after human approval; next due 2026-10-02."
+      }
+    },
+    {
+      "prompt": "Facilities: Set ticket 102 to 'done'. (expected: refused, not a valid status)",
+      "actor": "agent via MCP",
+      "tool": "update_ticket",
+      "arguments": {
+        "ticket_id": 102,
+        "status": "done",
+        "author": "Facilities",
+        "note": "x"
+      },
+      "output": {
+        "ok": false,
+        "refused": "status must be one of open, in_progress, awaiting_approval, resolved."
+      }
+    },
+    {
+      "prompt": "Boss: Show everything linked to ticket 101 now.",
+      "actor": "agent via MCP",
+      "tool": "get_ticket",
+      "arguments": {
+        "ticket_id": 101
+      },
+      "output": {
+        "date_today": "2026-08-31",
+        "ticket": {
+          "id": 101,
+          "type": "customer_order",
+          "requester": "Tauhid Zaman",
+          "subject": "Bulldog tee",
+          "sku": "CC-TEE-WHITE",
+          "size": "S",
+          "qty": 1,
+          "lease_id": null,
+          "invoice_id": 501,
+          "status": "open",
+          "notes": "Needs a tee in size S.",
+          "created_at": "2026-08-31T09:15:00-04:00"
+        },
+        "invoice": {
+          "id": 501,
+          "vendor_id": 1,
+          "amount": 840.0,
+          "due_date": "2026-08-28",
+          "status": "paid",
+          "description": "Rush reprint CC-TEE-WHITE S",
+          "vendor_name": "Bulldog Print Co",
+          "vendor_lead_days": 5,
+          "days_overdue": 3
+        },
+        "inventory": {
+          "sku": "CC-TEE-WHITE",
+          "name": "Classic Bulldog Tee",
+          "size": "S",
+          "qty": 0,
+          "location": "Aisle B"
+        },
+        "pricing": {
+          "sku": "CC-TEE-WHITE",
+          "unit_cost": 8.0,
+          "list_price": 28.0
+        },
+        "shortfall": 1,
+        "drafts": [
+          {
+            "id": 1,
+            "ticket_id": 101,
+            "recipient": "Tauhid Zaman",
+            "body": "Hi Tauhid, the Classic Bulldog Tee in size S is out of stock. We have ordered more and expect it by 2026-09-05. We will hold one for you.",
+            "author": "Customer Service",
+            "status": "draft",
+            "created_at": "2026-08-31"
+          }
+        ],
+        "payment_requests": [
+          {
+            "id": 1,
+            "kind": "invoice",
+            "ref_id": 501,
+            "ticket_id": 101,
+            "amount": 840.0,
+            "account": "checking",
+            "requested_by": "Accounting",
+            "reason": "Invoice 501 is 3 days overdue and blocks restocks for tickets 101 and 103.",
+            "status": "paid",
+            "requested_at": "2026-08-31",
+            "decided_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)",
+            "decided_at": "2026-08-31",
+            "decision_note": null,
+            "payment_id": 1
+          }
+        ],
+        "purchase_orders": [
+          {
+            "id": 1,
+            "vendor_id": 1,
+            "sku": "CC-TEE-WHITE",
+            "size": "S",
+            "qty": 1,
+            "unit_cost": 8.0,
+            "total": 8.0,
+            "ticket_id": 101,
+            "created_by": "Inventory",
+            "status": "draft",
+            "created_at": "2026-08-31",
+            "expected_arrival": "2026-09-05"
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Accounting: Show every payment and request now.",
+      "actor": "agent via MCP",
+      "tool": "list_payments",
+      "arguments": {},
+      "output": {
+        "date_today": "2026-08-31",
+        "cash_on_hand": 160.0,
+        "payments": [
+          {
+            "id": 2,
+            "kind": "rent",
+            "ref_id": 1,
+            "amount": 2400.0,
+            "account": "checking",
+            "paid_at": "2026-08-31",
+            "approved_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)"
+          },
+          {
+            "id": 1,
+            "kind": "invoice",
+            "ref_id": 501,
+            "amount": 840.0,
+            "account": "checking",
+            "paid_at": "2026-08-31",
+            "approved_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)"
+          }
+        ],
+        "payment_requests": [
+          {
+            "id": 3,
+            "kind": "purchase_order",
+            "ref_id": 2,
+            "ticket_id": 103,
+            "amount": 264.0,
+            "account": "checking",
+            "requested_by": "Accounting",
+            "reason": "Restock 12 size M hoodies for ticket 103.",
+            "status": "rejected",
+            "requested_at": "2026-08-31",
+            "decided_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)",
+            "decided_at": "2026-08-31",
+            "decision_note": "Not enough cash; offer the club other sizes instead.",
+            "payment_id": null
+          },
+          {
+            "id": 2,
+            "kind": "rent",
+            "ref_id": 1,
+            "ticket_id": 102,
+            "amount": 2400.0,
+            "account": "checking",
+            "requested_by": "Facilities",
+            "reason": "September rent of $2,400 is due 2026-09-02.",
+            "status": "paid",
+            "requested_at": "2026-08-31",
+            "decided_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)",
+            "decided_at": "2026-08-31",
+            "decision_note": null,
+            "payment_id": 2
+          },
+          {
+            "id": 1,
+            "kind": "invoice",
+            "ref_id": 501,
+            "ticket_id": 101,
+            "amount": 840.0,
+            "account": "checking",
+            "requested_by": "Accounting",
+            "reason": "Invoice 501 is 3 days overdue and blocks restocks for tickets 101 and 103.",
+            "status": "paid",
+            "requested_at": "2026-08-31",
+            "decided_by": "Will Barker (standing approval for simulated payments, given in chat 2026-10-06)",
+            "decided_at": "2026-08-31",
+            "decision_note": null,
+            "payment_id": 1
+          }
+        ],
+        "pending_total": 0
+      }
+    }
+  ]
+}

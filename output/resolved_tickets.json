@@ -1,0 +1,165 @@
+{
+  "shop_date": "2026-08-31",
+  "starting_checking": 3400.0,
+  "ending_checking": 160.0,
+  "ending_matches_cash_accounts": true,
+  "tickets": [
+    {
+      "id": 101,
+      "subject": "Bulldog tee",
+      "requester": "Tauhid Zaman",
+      "type": "customer_order",
+      "final_status": "resolved",
+      "outcome": "Resolved after Will approved invoice 501 ($840). Tauhid was offered a size M today, or a held size S about five days after the restock is ordered, in an unsent draft. No tee restock was ordered.",
+      "agents": [
+        {
+          "agent": "Boss",
+          "contribution": "Read the ticket and sent it to Inventory, then Accounting, then Customer Service. It set the ticket to awaiting_approval; on the second pass it checked list_payments, found invoice 501 paid, and marked it resolved."
+        },
+        {
+          "agent": "Inventory",
+          "contribution": "Confirmed size S had 0 on hand (short 1) and found M 5, L 3, and XL 2. It found Bulldog Print Co blocked by invoice 501, so it drafted no purchase order."
+        },
+        {
+          "agent": "Accounting",
+          "contribution": "Requested payment of invoice 501 ($840, request 1) because the overdue invoice blocks restocks and comes before rent that is not yet late. Checking would stay at $2,560, above the $200 floor."
+        },
+        {
+          "agent": "Customer Service",
+          "contribution": "Saved draft 1 to Tauhid Zaman (formal, unsent), offering a size M today or a held size S about five days after the restock order."
+        }
+      ],
+      "human_approvals": [
+        {
+          "request_id": 1,
+          "payment_id": 1,
+          "what": "invoice 501",
+          "amount": 840.0,
+          "approved_by": "Will Barker",
+          "approved_at_edt": "13:43:59"
+        }
+      ],
+      "drafts": [
+        {
+          "draft_id": 1,
+          "recipient": "Tauhid Zaman",
+          "sent": false
+        }
+      ],
+      "purchase_orders": [],
+      "cash_change": -840.0,
+      "runs": [
+        {
+          "run_id": "65a348393394",
+          "start_edt": "13:42:34",
+          "end_edt": "13:46:52",
+          "stopped": "completed",
+          "total_tokens": 45013
+        },
+        {
+          "run_id": "3283cb18abaa",
+          "start_edt": "13:55:27",
+          "end_edt": "13:55:51",
+          "stopped": "completed",
+          "total_tokens": 11402
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "subject": "Rent due",
+      "requester": "Elm City Properties",
+      "type": "rent_notice",
+      "final_status": "resolved",
+      "outcome": "Resolved after Will approved the $2,400 rent, knowing it would leave checking at $160, below the $200 floor. No note went to the landlord, as Will's rule requires.",
+      "agents": [
+        {
+          "agent": "Boss",
+          "contribution": "Read the ticket and sent it to Facilities. It set the ticket to awaiting_approval; on the second pass it checked list_payments, found the rent paid, and marked it resolved."
+        },
+        {
+          "agent": "Facilities",
+          "contribution": "Confirmed lease 1 (Chapel Street shop, $2,400, due 2 Sept, last on-time date 12 Sept) and handed the payment to Accounting. It wrote nothing to the landlord."
+        },
+        {
+          "agent": "Accounting",
+          "contribution": "Requested the rent ($2,400, request 2), flagged below the $200 floor because checking would fall to $160, so the decision was Will's."
+        }
+      ],
+      "human_approvals": [
+        {
+          "request_id": 2,
+          "payment_id": 2,
+          "what": "rent 1",
+          "amount": 2400.0,
+          "approved_by": "Will Barker",
+          "approved_at_edt": "13:50:02"
+        }
+      ],
+      "drafts": [],
+      "purchase_orders": [],
+      "cash_change": -2400.0,
+      "runs": [
+        {
+          "run_id": "01317ed94c75",
+          "start_edt": "13:46:52",
+          "end_edt": "13:51:11",
+          "stopped": "completed",
+          "total_tokens": 24433
+        },
+        {
+          "run_id": "a41871de6832",
+          "start_edt": "13:55:51",
+          "end_edt": "13:56:25",
+          "stopped": "completed",
+          "total_tokens": 10629
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "subject": "Bulk hoodie discount",
+      "requester": "Yale AI Club",
+      "type": "price_override",
+      "final_status": "resolved",
+      "outcome": "Resolved once the offer was drafted. The Yale AI Club is offered 20 hoodies at $46.40 each (20% bulk discount, $928): 8 size M now and 12 size M after a restock arriving about 5 Sept, or other sizes from stock. No money moved.",
+      "agents": [
+        {
+          "agent": "Boss",
+          "contribution": "Read the ticket and sent it to Inventory, then Accounting, then Customer Service. It accepted the 20% offer and marked the ticket resolved once the draft was saved."
+        },
+        {
+          "agent": "Inventory",
+          "contribution": "Found 8 M on hand (short 12) plus S 4, L 14, and XL 6. Bulldog Print Co was no longer blocked, because Will had paid invoice 501 earlier in the run, so an order would arrive 5 Sept. It drafted no purchase order."
+        },
+        {
+          "agent": "Accounting",
+          "contribution": "Checked cash ($160) and priced 20 hoodies at the 20% maximum: $46.40 each, $928, a 53% margin. Its first quote_price call passed the vendor's name as the SKU and was refused; it re-read the ticket and retried correctly. It requested no payment."
+        },
+        {
+          "agent": "Customer Service",
+          "contribution": "Saved draft 2 to the Yale AI Club (formal, unsent) with the $46.40 offer, 8 M now, 12 M after a restock in about five days, and other sizes as alternatives."
+        }
+      ],
+      "human_approvals": [],
+      "drafts": [
+        {
+          "draft_id": 2,
+          "recipient": "Yale AI Club",
+          "sent": false
+        }
+      ],
+      "purchase_orders": [],
+      "cash_change": 0,
+      "runs": [
+        {
+          "run_id": "e881d334e2d3",
+          "start_edt": "13:51:11",
+          "end_edt": "13:55:03",
+          "stopped": "completed",
+          "total_tokens": 40346
+        }
+      ]
+    }
+  ]
+}

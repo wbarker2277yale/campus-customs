@@ -1,0 +1,32 @@
+{
+  "caller": "Claude Code (the vibe coder), calling the campus-customs MCP server directly through .mcp.json",
+  "called_on": "2026-10-06",
+  "database": "data/campus_customs_new.db (working copy; all four calls are read-only)",
+  "note": "Claude Code's connection loaded the first version of the server, which had 3 tools. The 8 tools added later were tested by mcp_server/smoke_test.py; see script_calls in smoke.json.",
+  "calls": [
+    {
+      "prompt": "Boss: What tickets are open on the board today?",
+      "tool": "mcp__campus-customs__list_open_tickets",
+      "arguments": {},
+      "output": {"date_today":"2026-08-31","status":"open","count":3,"tickets":[{"id":101,"type":"customer_order","requester":"Tauhid Zaman","subject":"Bulldog tee","sku":"CC-TEE-WHITE","size":"S","qty":1,"lease_id":null,"invoice_id":501,"status":"open","notes":"Needs a tee in size S.","created_at":"2026-08-31T09:15:00-04:00"},{"id":102,"type":"rent_notice","requester":"Elm City Properties","subject":"Rent due","sku":null,"size":null,"qty":null,"lease_id":1,"invoice_id":null,"status":"open","notes":"Email: shop rent due in 2 days.","created_at":"2026-08-31T11:05:00-04:00"},{"id":103,"type":"price_override","requester":"Yale AI Club","subject":"Bulk hoodie discount","sku":"CC-HOOD-NAVY","size":"M","qty":20,"lease_id":null,"invoice_id":null,"status":"open","notes":"Student org wants 20 hoodies, size M, asking for a bulk discount.","created_at":"2026-08-31T16:55:00-04:00"}]}
+    },
+    {
+      "prompt": "Inventory: Ticket 101 needs one Classic Bulldog Tee in size S. Do we have it?",
+      "tool": "mcp__campus-customs__check_stock",
+      "arguments": {"sku": "CC-TEE-WHITE", "size": "S", "qty_needed": 1},
+      "output": {"sku":"CC-TEE-WHITE","name":"Classic Bulldog Tee","found":true,"unit_cost":8,"list_price":28,"sizes":[{"size":"S","qty_on_hand":0,"location":"Aisle B"}],"qty_needed":1,"shortfall":1}
+    },
+    {
+      "prompt": "Inventory: Ticket 103 wants 20 navy hoodies in size M. How many do we have, and what do they cost us?",
+      "tool": "mcp__campus-customs__check_stock",
+      "arguments": {"sku": "CC-HOOD-NAVY", "size": "M", "qty_needed": 20},
+      "output": {"sku":"CC-HOOD-NAVY","name":"Basic Hoodie Big Yale","found":true,"unit_cost":22,"list_price":58,"sizes":[{"size":"M","qty_on_hand":8,"location":"Aisle A"}],"qty_needed":20,"shortfall":12}
+    },
+    {
+      "prompt": "Accounting: Which bills are unpaid, is any vendor blocked from shipping, and how much cash is left if we pay them all?",
+      "tool": "mcp__campus-customs__get_bills_due",
+      "arguments": {},
+      "output": {"date_today":"2026-08-31","cash_accounts":[{"name":"checking","balance":3400,"date":"2026-08-31"}],"cash_on_hand":3400,"open_invoices":[{"invoice_id":501,"vendor_id":1,"vendor_name":"Bulldog Print Co","amount":840,"due_date":"2026-08-28","days_overdue":3,"overdue":true,"description":"Rush reprint CC-TEE-WHITE S","vendor_blocked":true,"vendor_lead_days":5}],"rent_due":[{"lease_id":1,"space_name":"Chapel Street shop","landlord":"Elm City Properties","amount":2400,"next_due":"2026-09-02","days_until_due":2}],"total_due":3240,"cash_after_all_bills":160}
+    }
+  ]
+}
