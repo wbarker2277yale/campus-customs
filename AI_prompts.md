@@ -1,10 +1,12 @@
 # AI Prompts — Campus Customs Multi-Agent Operations
 
-A record of the prompts I used with the AI assistant for this assignment. Every prompt is written in my own words, not copied from the assignment site. Spelling, typos, and names (files, folders, tools) have been corrected. Where my original wording was unclear, a clarified version is shown in [brackets].
+A record of the prompts I gave the AI assistant (Claude Code) for this assignment, grouped by problem. Spelling, typos, and names (files, folders, tools) have been corrected. Where my original wording was unclear, a clarified version is shown in [brackets]. Each problem notes what the first prompt lacked, which the follow-ups supplied.
 
 ---
 
 ## Problem 1 — Vibe Coder Prompts
+
+**What the first prompt lacked:** it named the problem but not the file or its format; the follow-ups gave the file name and the log format used in this class.
 
 **Prompt 1:**
 > Use this to understand the setup; the prompts will be in my own words.
@@ -30,6 +32,8 @@ A record of the prompts I used with the AI assistant for this assignment. Every 
 
 ## Problem 2 — Study the Campus Customs Database
 
+**What the first prompt lacked:** it asked for a copy and a look at the data, but not for the ticket relationships or the field list; the follow-ups added both.
+
 **Prompt:**
 > Problem 2: Study the Campus Customs database. Look through the data and make a new copy.
 >
@@ -43,6 +47,8 @@ A record of the prompts I used with the AI assistant for this assignment. Every 
 ---
 
 ## Problem 3 — MCP Server
+
+**What the first prompt lacked:** it did not settle folder and file names, where the project lives, which further tools the agents need, or what a "payment" is in a school exercise; the follow-ups covered each.
 
 **Prompt:**
 > Build an MCP server using FastMCP on `data/campus_customs_new.db`. I won't run it; every agent will call its tools. Put three tools in it for now; more are coming. Invent no data. List the tools in `output/harness.md`, and for each tool explain which ticket it unlocks, with one sentence on why it helps. Don't be vague; be specific. Feel free to use my Seastreak style guide for the wording. Include `mcp/README.md`. Throughout this, correct the names I use.
@@ -80,6 +86,8 @@ A record of the prompts I used with the AI assistant for this assignment. Every 
 
 ## Problem 4 — Add the MCP Server to the Vibe Coder
 
+**What the first prompt lacked:** where to save the evidence, and how to keep the vibe coder's own tool calls separate from scripted ones.
+
 These prompts were sent during Problem 3, before Problem 4 was named; they are its work.
 
 **Prompt:**
@@ -108,6 +116,8 @@ These prompts were sent during Problem 3, before Problem 4 was named; they are i
 
 ## Problem 5 — Agent Team
 
+**What the first prompt lacked:** the shop rules themselves; the prompt questions below (logged after Problem 7, when they were answered) supplied them one at a time.
+
 **Prompt:**
 > Now we will build the agent team for Campus Customs using PydanticAI. It comprises Boss, Inventory, Accounting, Facilities, and Customer Service, with prompts, models, and agent loops, so they can delegate work to each other with full connectivity. The prompts go in `backend/prompts/`, one file per agent; the data types go in `backend/models.py`; and the agent files go under `backend/`. Use the Portkey API key, and `gpt-6-luna` is the only model every agent uses. The prompts will be written in my own words and include the shop rules the agents need. Grades are higher for more specific prompts, so grill me on that. Any tools the agents need to work the open tickets get added to the MCP server. The facts come from the same server, over `data/campus_customs_new.db`, with no second shop-tools layer that bypasses it. Wire the agents to append to `output/audit_trail.json` as they run, recording enough at each loop step for a later audit; the file is appended to, never wiped. `output/harness.md` will list each agent, each MCP tool (including any added here), and the tables those tools use, plus a safety section with the guardrails a real business would want before agents dealt with genuine customers and money, and limits (my invention left to you) to curb token use. Update `mcp/README.md` so the tool list matches what exists.
 >
@@ -116,6 +126,8 @@ These prompts were sent during Problem 3, before Problem 4 was named; they are i
 ---
 
 ## Problem 6 — Plan the Three Tickets
+
+**What the first prompt lacked:** it arrived mid-task without the problem number; the follow-up confirmed it as Problem 6.
 
 **Prompt:**
 > Before wiring the backend, write a forecast of what you would expect each agent to do on each open ticket, in `output/desk_tickets.html`. The page opens with a double-click and has one tab per ticket (101, 102, 103), plus empty Cash and Reflection tabs for later. On each ticket tab, fill in only the Expected section and leave room in the Actual section for after the agents run. In the Expected section I will write, in my own words, which agent should be called first, the delegations I expect, and the tools I expect the run to use, remembering that I will score low if I expect every specialist to be called on every ticket.
@@ -130,6 +142,8 @@ These prompts were sent during Problem 3, before Problem 4 was named; they are i
 ---
 
 ## Problem 7 — Backend Routes
+
+**What the first prompt lacked:** it asked to be questioned but did not list the routes; the later prompt listed the six routes and the start command.
 
 **Prompt:**
 > Grill me one by one on Problem 7, backend routes (don't build yet). The React dashboard, built later, needs a backend in `backend/main.py`.
@@ -198,6 +212,8 @@ These prompts were sent during Problem 3, before Problem 4 was named; they are i
 ---
 
 ## Problem 5 — Agent Team (prompt questions)
+
+These answers belong to Problem 5; they were given after Problem 7 was planned, so they appear here in the order they happened.
 
 > Rent, because if you don't have a shop, you don't have a business. If obliging landlord = true, and vendor relationship = more essential, then pay vendor.
 >
@@ -297,6 +313,8 @@ These prompts were sent during Problem 3, before Problem 4 was named; they are i
 
 ## Problem 9 — Run the Agents and Compare
 
+**What the first prompt lacked:** the Cash tab, the resolved-ticket files, and the harness; the follow-ups added them, then asked for the board to stop freezing and for the write-ups to match the final run.
+
 **Prompt:**
 > Problem 9: resolve the tickets. Before testing the run, reset the working database (`data/campus_customs_new.db`) for a fresh start. Note the starting checking balance, then, and only then, run all three agents until the tickets are resolved. Then open `output/desk_tickets.html` from Problem 6 and fill the Actual section from the run: which agents worked when, the reasons for delegation, and the reasons for the tools they used. Keep the Expected section so we can compare.
 
@@ -343,7 +361,7 @@ These prompts were sent during Problem 3, before Problem 4 was named; they are i
 
 > It's clearly stuck. Fix it.
 >
-> [Clarified: Boss's final report on ticket 103 took 4.5 minutes; the model wrote 6,000 tokens of text before filing the report. Fixed with a fixed closing instruction after every prompt (file the report at once, never as plain text first) and a 90-second limit on each model call, with one retry.]
+> [Clarified: Boss's final report on ticket 103 took 4.5 minutes; the model wrote 6,000 tokens of text before filing the report. Fixed with a fixed closing instruction after every prompt (file the report at once, never as plain text first) and a 90-second limit on each model call, with one retry (later shortened to 15 seconds with three retries).]
 
 > Why do I still have a ticket open if it says complete?
 >
@@ -361,14 +379,110 @@ These prompts were sent during Problem 3, before Problem 4 was named; they are i
 
 > Open my Campus Customs website.
 
+> Reset the website and let's run it again.
+
+> Open the game.
+
+> How's it doing?
+>
+> [Clarified: "The game" is the Campus Customs board. The run on all three tickets was still going.]
+
+> Open the game again.
+
+> Is there an ability to reset it?
+
+> Should there be?
+>
+> [Clarified: Yes. Problem 7 requires a reset route, and the board's "Restore opening day" button calls it.]
+
+> It seems frozen again.
+
+> Why does it wait so long? It seems like it should run much faster.
+>
+> [Clarified: Every tool call takes milliseconds; the waits are calls to `gpt-6-luna` through Portkey, which usually return in 2 to 6 seconds but sometimes stall. Each model call is now cut at 15 seconds and retried up to three times.]
+
+> It looks like it's done and the agents aren't doing anything, but it still says "Awaiting Signature" for something I signed. Look at it and tell me what is wrong.
+>
+> [Clarified: Boss had set ticket 102 to awaiting approval before Will signed, and approvals never start a run. The board now shows "Signed · Boss to close" with a "Close this ticket" button.]
+
+> When it's done, should the closing screen come up?
+
+> I just don't understand what the secondary page is.
+>
+> [Clarified: The board is the app; `output/desk_tickets.html` and `output/resolved_board.html` are the write-ups, which do not update live.]
+
+> Open the write-up pages.
+
+> Rebuild them from the new run.
+>
+> [Clarified: The Actual sections, the Cash tab, `resolved_tickets.json`, `resolved_board.html`, and the board screenshots were rebuilt from the run of 14 October (reset at 14:17; all three tickets resolved; checking $3,400 to $160).]
+
+---
+
+## Problem 10 — Reflection
+
+**What the first prompt lacked:** my own draft had no ticket-by-ticket detail and got two facts wrong; the follow-ups asked the AI to improve it and then to put it into three paragraphs in my style.
+
+**Prompt:**
 > What is the reflection part, and where do I write it?
 
-> Also, I don't remember what this means: "The final problem's text. You said the last problem shows the repo's file tree."
-
+**Follow-up prompts:**
 > Open the page where I write the reflection.
 
 > It doesn't seem I can write anything there.
 >
-> [Clarified: The Reflection tab now has a writing box and a Save button. The backend serves the page at http://localhost:8000/output/desk_tickets.html#reflection, and Save writes Will's text into the tab and into `output/reflection.md`.]
+> [Clarified: The Reflection tab now has a writing box and a Save button. The backend serves the page at http://localhost:8000/output/desk_tickets.html#reflection, and Save writes the text into the tab and into `output/reflection.md`.]
 
-> Reset the website and let's run it again.
+> Create a draft of answers to the reflection questions in a text file.
+>
+> [Clarified: The AI drafted answers from the run's records (the audit trail, the database, and `desk_tickets.html`) in a text file outside the project, for reference.]
+
+> Improve this:
+>
+> It seems that things mostly went as expected. There were a few things that did not work in the digital simulation that might have worked better in real life. For instance, I had a counteroffer feature that would have sent a counteroffer to someone asking for a big discount that did not work because there was not a real person to send the counteroffer to.
+>
+> The predicted course of action only differed from expected in ticket 1, where the requested t shirt was never ordered.
+>
+> This may have been simpler as one agent, as there was a lot of down time waiting on agents to communicate. They also seemed not to be individually able to grasp the actual whole problem they were facing, which made them make strange decisions sometimes.
+>
+> A more efficient version of this would help Campus Customs if they were facing a large number of very basic orders online. It might also help them better keep track of inventory and could improve user satisfaction on the website.
+>
+> It would not help them if Campus Customs faced an AI backlash, if it wanted to cultivate a more old-world image, or if it needed AI to analyze its business fundamentals.
+>
+> [Clarified: My own draft. The AI tightened it, corrected two points the run contradicted (ticket 103 also differed from the plan, and counteroffers stay drafts by design), and marked places for me to add detail.]
+
+> Translate this into three short prose paragraphs using my style guide.
+>
+> [Clarified: The AI rewrote the improved version as three paragraphs in my style guide's manner. I added my reason for approving the rent and saved the result in the Reflection tab.]
+
+> OK, it's in.
+
+---
+
+## Problem 11 — Submit to GitHub
+
+**What the first prompt lacked:** it did not say what the required file layout meant or what to do first; the follow-ups asked for the fixes, then for the steps one at a time.
+
+**Prompt:**
+> Also, I don't remember what this means: "The final problem's text. You said the last problem shows the repo's file tree."
+
+**Follow-up prompts:**
+> OK, go on the fixes, but I can't do the report until the website works well and stops freezing all the time.
+>
+> [Clarified: Match the assignment's file layout, which differed from names chosen earlier after the Lecture 9 build:
+> - `mcp/mcp_server.py` became `mcp_server/server.py`, and `mcp/README.md` became `mcp_server/README.md`;
+> - `output/mcp/smoke.json` became `output/mcp_smoke.json`;
+> - one `requirements.txt`, `README.md`, and `.gitignore` were added at the project root, with one shared `.venv`;
+> - `resolved_board.html` gained a screenshot of the board for each ticket.
+> Model calls now time out and retry instead of hanging. Earlier entries in this log keep the old names.]
+
+> OK, walk me through the next steps, step by step.
+
+> OK.
+>
+> [Clarified: The public repository https://github.com/wbarker2277yale/campus-customs was created.]
+
+> Yes.
+>
+> [Clarified: Approval to push. The repo URL is in `output/github_url.txt`, and `hw5.zip` was built from the pushed commit.]
+
